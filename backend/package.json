@@ -18,8 +18,10 @@
   "dependencies": {
     "aws-sdk": "^2.1692.0",
     "inversify": "^7.10.1",
+    "mysql2": "^3.15.1",
     "reflect-metadata": "^0.2.2",
-    "tslib": "^2.8.1"
+    "tslib": "^2.8.1",
+    "typeorm": "^0.3.27"
   },
   "devDependencies": {
     "@eslint/compat": "^1.4.0",

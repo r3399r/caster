@@ -46,6 +46,8 @@ export default defineConfig([{
             argsIgnorePattern: "^_",
         }],
 
+        "@typescript-eslint/no-unsafe-function-type": "off",
+
         "arrow-body-style": ["error", "as-needed"],
         curly: ["error", "multi"],
 

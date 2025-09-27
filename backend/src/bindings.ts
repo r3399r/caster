@@ -1,7 +1,32 @@
 import { SQS } from 'aws-sdk';
 import { Container } from 'inversify';
+import { DbAccess } from './dao/DbAccess';
+import { QuestionAccess } from './dao/QuestionAccess';
+import { QuestionService } from './logic/QuestionService';
+import { QuestionEntity } from './model/entity/QuestionEntity';
+import { QuestionMinorEntity } from './model/entity/QuestionMinorEntity';
+import { ReplyEntity } from './model/entity/ReplyEntity';
+import { UserEntity } from './model/entity/UserEntity';
+import { Database, dbEntitiesBindingId } from './utils/Database';
 
 const container: Container = new Container();
+
+container.bind(Database).toSelf().inSingletonScope();
+
+// db entities
+container.bind<Function>(dbEntitiesBindingId).toConstantValue(QuestionEntity);
+container
+  .bind<Function>(dbEntitiesBindingId)
+  .toConstantValue(QuestionMinorEntity);
+container.bind<Function>(dbEntitiesBindingId).toConstantValue(UserEntity);
+container.bind<Function>(dbEntitiesBindingId).toConstantValue(ReplyEntity);
+
+// db access
+container.bind(DbAccess).toSelf();
+container.bind(QuestionAccess).toSelf();
+
+// service
+container.bind(QuestionService).toSelf();
 
 // AWS
 container.bind(SQS).toDynamicValue(() => new SQS());

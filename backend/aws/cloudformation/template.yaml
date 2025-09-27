@@ -56,7 +56,17 @@ Resources:
           },
           "paths": {
             "/api/question": {
-              "get": {
+              "post": {
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/postQuestion"
+                      }
+                    }
+                  },
+                  "required": true
+                },
                 "responses": {
                   "200": {
                     "description": "200 response",
@@ -74,7 +84,7 @@ Resources:
                     }
                   }
                 },
-                "x-amazon-apigateway-request-validator" : "Validate query string parameters and headers",
+                "x-amazon-apigateway-request-validator": "Validate body, query string parameters, and headers",
                 "x-amazon-apigateway-integration": {
                   "type": "aws_proxy",
                   "httpMethod": "POST",
@@ -97,6 +107,15 @@ Resources:
             "Empty": {
               "type": "object",
               "title": "Empty Schema"
+            },
+            "postQuestion": {
+              "type": "object",
+              "properties": {
+                "content":{"type": "string"},
+                "isFreeResponse":{"type": "boolean"},
+                "discussionUrl":{"type": "string"}
+              },
+              "required": ["content","isFreeResponse","discussionUrl"]
             }
           },
           "x-amazon-apigateway-request-validators" : {
@@ -124,10 +143,9 @@ Resources:
       Environment:
         Variables:
           PROJECT: !Sub ${Project}
-          DB_CLUSTER: !Sub '{{resolve:ssm:${TargetEnvr}-db-cluster:1}}'
-          DB_HOST: !Sub '{{resolve:ssm:${TargetEnvr}-db-host:1}}'
-          DB_PWD: !Sub '{{resolve:ssm:${TargetEnvr}-db-pwd:1}}'
-          DB_USER: !Sub '{{resolve:ssm:${TargetEnvr}-db-user:1}}'
+          DB_HOST:
+            Fn::ImportValue: !Sub celestial-studio-${TargetEnvr}-db-endpoint
+          DB_PWD: !Sub '{{resolve:ssm:mysql-${TargetEnvr}-${Project}-pwd}}'
           LOGGER_QUEUE_URL: !Sub https://sqs.ap-east-2.amazonaws.com/${AWS::AccountId}/polaris-${TargetEnvr}-logger-queue
   InvokePermissionLambdaApi:
     Type: AWS::Lambda::Permission

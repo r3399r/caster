@@ -1,37 +1,37 @@
 import { SQS } from 'aws-sdk';
 import { bindings } from 'src/bindings';
+import { DbAccess } from 'src/dao/DbAccess';
 import { GatewayTimeoutError } from 'src/model/error/5XX/GatewayTimeoutError';
 import { LambdaContext, LambdaEvent, LambdaOutput } from 'src/model/Lambda';
 import question from 'src/routes/question';
 import { errorOutput, successOutput } from 'src/utils/LambdaHelper';
 
 const apiProcess = async (event: LambdaEvent): Promise<LambdaOutput> => {
-  // const db = bindings.get(DbAccess);
-  // let output: LambdaOutput;
-  // await db.startTransaction();
+  const db = bindings.get(DbAccess);
+  let output: LambdaOutput;
+  await db.startTransaction();
   // initLambda(event);
 
-  // try {
-  let res: unknown;
+  try {
+    let res: unknown;
 
-  const resource = event.resource.split('/')[2];
-  switch (resource) {
-    case 'question':
-      res = await question(event);
-      break;
+    const resource = event.resource.split('/')[2];
+    switch (resource) {
+      case 'question':
+        res = await question(event);
+        break;
+    }
+
+    output = successOutput(res);
+    await db.commitTransaction();
+  } catch (e) {
+    console.error(e);
+    await db.rollbackTransaction();
+
+    output = errorOutput(e);
+  } finally {
+    await db.cleanup();
   }
-
-  const output = successOutput(res);
-  // await db.commitTransaction();
-  // } catch (e) {
-  //   console.error(e);
-  //   await db.rollbackTransaction();
-
-  //   output = errorOutput(e);
-  // } finally {
-  //   await db.cleanup();
-  // }
-  console.log(output);
 
   return output;
 };
