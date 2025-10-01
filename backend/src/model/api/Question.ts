@@ -2,9 +2,9 @@ import { Question } from 'src/model/entity/QuestionEntity';
 import { Paginate, PaginationParams } from 'src/model/Pagination';
 
 export type PostQuestionRequest = {
+  categoryName: string;
   content: string;
-  isFreeResponse: boolean;
-  discussionUrl: string;
+  discussionUrl: string | null;
   minor: {
     type: 'SINGLE' | 'MULTIPLE';
     orderIndex: number;
@@ -24,4 +24,6 @@ export type PostQuestionReplyRequest = {
 
 export type GetQuestionParams = PaginationParams;
 
-export type GetQuestionResponse = Paginate<Question>;
+export type ModifiedQuestion = Question & { uid: string };
+
+export type GetQuestionResponse = Paginate<ModifiedQuestion>;

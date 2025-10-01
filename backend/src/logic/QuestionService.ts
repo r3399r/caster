@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { LIMIT, OFFSET } from 'src/constant/Pagination';
+import { CategoryAccess } from 'src/dao/CategoryAccess';
 import { QuestionAccess } from 'src/dao/QuestionAccess';
 import { QuestionMinorAccess } from 'src/dao/QuestionMinorAccess';
 import { ReplyAccess } from 'src/dao/ReplyAccess';
@@ -14,6 +15,7 @@ import { QuestionMinorEntity } from 'src/model/entity/QuestionMinorEntity';
 import { ReplyEntity } from 'src/model/entity/ReplyEntity';
 import { BadRequestError } from 'src/model/error';
 import { genPagination } from 'src/utils/paginator';
+import { randomBase36 } from 'src/utils/random';
 import { UserService } from './UserService';
 
 /**
@@ -29,6 +31,8 @@ export class QuestionService {
   private readonly userService!: UserService;
   @inject(ReplyAccess)
   private readonly replyAccess!: ReplyAccess;
+  @inject(CategoryAccess)
+  private readonly categoryAccess!: CategoryAccess;
 
   public async getQuestionList(
     params: GetQuestionParams | null
@@ -40,13 +44,24 @@ export class QuestionService {
       skip: offset,
     });
 
-    return { data: question, paginate: genPagination(total, limit, offset) };
+    return {
+      data: question.map((v) => ({
+        ...v,
+        uid: v.rid + v.id.toString(36),
+      })),
+      paginate: genPagination(total, limit, offset),
+    };
   }
 
   public async createQuestion(data: PostQuestionRequest) {
+    const category = await this.categoryAccess.findOneOrFail({
+      where: { name: data.categoryName },
+    });
+
     const questionEntity = new QuestionEntity();
+    questionEntity.rid = randomBase36(3);
+    questionEntity.categoryId = category.id;
     questionEntity.content = data.content;
-    questionEntity.isFreeResponse = data.isFreeResponse;
     questionEntity.discussionUrl = data.discussionUrl;
 
     const newQuestionEntity = await this.questionAccess.save(questionEntity);
@@ -60,9 +75,9 @@ export class QuestionService {
       questionMinorEntity.options = m.options;
       questionMinorEntity.answer = m.answer;
 
-      const newMinorEntity =
+      const minorEntity =
         await this.questionMinorAccess.save(questionMinorEntity);
-      minor.push(newMinorEntity);
+      minor.push(minorEntity);
     }
 
     return {

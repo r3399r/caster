@@ -10,10 +10,15 @@ import { QuestionMinor, QuestionMinorEntity } from './QuestionMinorEntity';
 
 export type Question = {
   id: number;
+  rid: string;
+  categoryId: number;
   content: string;
-  isFreeResponse: boolean;
-  discussionUrl: string;
+  discussionUrl: string | null;
+  source: string | null;
   minor: QuestionMinor[];
+  count: number;
+  scoringRate: number | null;
+  avgElapsedTimeMs: number | null;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -23,14 +28,34 @@ export class QuestionEntity implements Question {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id!: number;
 
+  @Column({ type: 'varchar', length: 16 })
+  rid!: string;
+
+  @Column({ type: 'int', unsigned: true, name: 'category_id' })
+  categoryId!: number;
+
   @Column({ type: 'text' })
   content!: string;
 
-  @Column({ type: 'boolean', name: 'is_free_response', default: false })
-  isFreeResponse: boolean = false;
+  @Column({
+    type: 'varchar',
+    length: 255,
+    name: 'discussion_url',
+    default: null,
+  })
+  discussionUrl: string | null = null;
 
-  @Column({ type: 'varchar', length: 255, name: 'discussion_url' })
-  discussionUrl!: string;
+  @Column({ type: 'varchar', length: 255, default: null })
+  source: string | null = null;
+
+  @Column({ type: 'int', unsigned: true })
+  count: number = 0;
+
+  @Column({ type: 'double', name: 'scoring_rate', default: null })
+  scoringRate: number | null = null;
+
+  @Column({ type: 'double', name: 'avg_elapsed_time_ms', default: null })
+  avgElapsedTimeMs: number | null = null;
 
   @OneToMany(
     () => QuestionMinorEntity,

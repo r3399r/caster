@@ -193,8 +193,8 @@ Resources:
             "postQuestion": {
               "type": "object",
               "properties": {
+                "categoryName":{"type": "string"},
                 "content":{"type": "string"},
-                "isFreeResponse":{"type": "boolean"},
                 "discussionUrl":{"type": "string"},
                 "minor": {
                   "type": "array",
@@ -210,7 +210,7 @@ Resources:
                   }
                 }
               },
-              "required": ["content","isFreeResponse","discussionUrl"]
+              "required": ["categoryName","content","discussionUrl"]
             },
             "postQuestionReply": {
               "type": "object",

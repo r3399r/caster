@@ -12,6 +12,8 @@ import { QuestionMinorEntity } from './model/entity/QuestionMinorEntity';
 import { ReplyEntity } from './model/entity/ReplyEntity';
 import { UserEntity } from './model/entity/UserEntity';
 import { Database, dbEntitiesBindingId } from './utils/Database';
+import { CategoryEntity } from './model/entity/CategoryEntity';
+import { CategoryAccess } from './dao/CategoryAccess';
 
 const container: Container = new Container();
 
@@ -24,6 +26,7 @@ container
   .toConstantValue(QuestionMinorEntity);
 container.bind<Function>(dbEntitiesBindingId).toConstantValue(UserEntity);
 container.bind<Function>(dbEntitiesBindingId).toConstantValue(ReplyEntity);
+container.bind<Function>(dbEntitiesBindingId).toConstantValue(CategoryEntity);
 
 // db access
 container.bind(DbAccess).toSelf();
@@ -31,6 +34,7 @@ container.bind(QuestionAccess).toSelf();
 container.bind(QuestionMinorAccess).toSelf();
 container.bind(ReplyAccess).toSelf();
 container.bind(UserAccess).toSelf();
+container.bind(CategoryAccess).toSelf();
 
 // service
 container.bind(QuestionService).toSelf();

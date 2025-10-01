@@ -1,9 +1,15 @@
 CREATE TABLE IF NOT EXISTS caster.question (
     id INT UNSIGNED AUTO_INCREMENT,
+    rid VARCHAR(16) NOT NULL,
+    category_id INT UNSIGNED NOT NULL,
     content TEXT NOT NULL,
-    is_free_response BOOLEAN NOT NULL DEFAULT FALSE,
-    discussion_url VARCHAR(255) NOT NULL,
+    discussion_url VARCHAR(255) NULL,
+    source VARCHAR(255) NULL,
+    count INT UNSIGNED NOT NULL DEFAULT 0,
+    scoring_rate DOUBLE NULL,
+    avg_elapsed_time_ms DOUBLE NULL,
     created_at DATETIME(3) NULL,
     updated_at DATETIME(3) NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FOREIGN KEY (category_id) REFERENCES category(id)
 );
