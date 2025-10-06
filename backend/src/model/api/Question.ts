@@ -27,3 +27,5 @@ export type GetQuestionParams = PaginationParams;
 export type ModifiedQuestion = Question & { uid: string };
 
 export type GetQuestionResponse = Paginate<ModifiedQuestion>;
+
+export type GetQuestionIdResponse = Question;

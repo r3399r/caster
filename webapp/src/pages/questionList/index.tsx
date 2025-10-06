@@ -19,6 +19,7 @@ const QuestionList = () => {
         setCount(res?.data.paginate.totalPages);
       });
   }, [page]);
+
   return (
     <div>
       {list?.map((v) => (

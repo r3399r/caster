@@ -5,6 +5,7 @@ import { QuestionAccess } from 'src/dao/QuestionAccess';
 import { QuestionMinorAccess } from 'src/dao/QuestionMinorAccess';
 import { ReplyAccess } from 'src/dao/ReplyAccess';
 import {
+  GetQuestionIdResponse,
   GetQuestionParams,
   GetQuestionResponse,
   PostQuestionReplyRequest,
@@ -33,6 +34,12 @@ export class QuestionService {
   private readonly replyAccess!: ReplyAccess;
   @inject(CategoryAccess)
   private readonly categoryAccess!: CategoryAccess;
+
+  public async getQuestionByUid(uid: string): Promise<GetQuestionIdResponse> {
+    const id = parseInt(uid.substring(3), 36);
+
+    return this.questionAccess.findOneOrFail({ where: { id } });
+  }
 
   public async getQuestionList(
     params: GetQuestionParams | null
