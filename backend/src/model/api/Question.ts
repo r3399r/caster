@@ -4,10 +4,11 @@ import { Paginate, PaginationParams } from 'src/model/Pagination';
 export type PostQuestionRequest = {
   categoryName: string;
   content: string;
-  discussionUrl: string | null;
+  discussionUrl: string;
   minor: {
     type: 'SINGLE' | 'MULTIPLE';
     orderIndex: number;
+    content?: string;
     options: string;
     answer: string;
   }[];

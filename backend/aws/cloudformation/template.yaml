@@ -240,6 +240,7 @@ Resources:
                     "properties": {
                       "type": {"type": "string", enum: ["SINGLE","MULTIPLE"]},
                       "orderIndex": {"type": "integer", "minimum": 0},
+                      "content": {"type":"string"},
                       "options": {"type": "string"},
                       "answer": {"type": "string"}
                     },

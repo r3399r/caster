@@ -37,8 +37,12 @@ export class QuestionService {
 
   public async getQuestionByUid(uid: string): Promise<GetQuestionIdResponse> {
     const id = parseInt(uid.substring(3), 36);
+    const rid = uid.substring(0, 3).toUpperCase();
 
-    return this.questionAccess.findOneOrFail({ where: { id } });
+    const question = await this.questionAccess.findOneOrFail({ where: { id } });
+    if (question.rid !== rid) throw new BadRequestError('rid is not matched');
+
+    return question;
   }
 
   public async getQuestionList(
@@ -79,6 +83,7 @@ export class QuestionService {
       questionMinorEntity.questionId = newQuestionEntity.id;
       questionMinorEntity.type = m.type;
       questionMinorEntity.orderIndex = m.orderIndex;
+      questionMinorEntity.content = m.content ?? null;
       questionMinorEntity.options = m.options;
       questionMinorEntity.answer = m.answer;
 

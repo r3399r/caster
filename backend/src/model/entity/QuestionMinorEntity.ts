@@ -14,6 +14,7 @@ export type QuestionMinor = {
   questionId: number;
   type: string;
   orderIndex: number;
+  content: string | null;
   options: string | null;
   answer: string | null;
   createdAt: string | null;
@@ -37,6 +38,9 @@ export class QuestionMinorEntity implements QuestionMinor {
 
   @Column({ type: 'int', name: 'order_index' })
   orderIndex!: number;
+
+  @Column({ type: 'text' })
+  content: string | null = null;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   options: string | null = null;
