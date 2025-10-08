@@ -13,6 +13,9 @@ const Question = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [question, setQuestion] = useState<Question>();
   const [repliedAnswer, setRepliedAnswer] = useState<{ id: number; answer: string }[]>();
+  const [seconds, setSeconds] = useState<number>(0);
+  const [running, setRunning] = useState<boolean>(false);
+  const [startTimestamp, setStartTimestamp] = useState<number>();
 
   useEffect(() => {
     questionEndpoint.getQuestionId(id ?? '').then((res) => {
@@ -20,6 +23,18 @@ const Question = () => {
       setRepliedAnswer(res?.data.minor.map((v) => ({ id: v.id, answer: '' })));
     });
   }, [id]);
+
+  useEffect(() => {
+    let interval: number | undefined;
+    if (running) {
+      interval = setInterval(() => {
+        setSeconds((prev) => prev + 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [running]);
 
   const onClickSingle = (id: number) => (e: ChangeEvent<HTMLInputElement>) => {
     const thisAnswer = repliedAnswer?.map((r) =>
@@ -40,7 +55,7 @@ const Question = () => {
   };
 
   const onSubmit = () => {
-    if (!id || !repliedAnswer || !question) return;
+    if (!id || !repliedAnswer || !question || !startTimestamp) return;
 
     const totalScore = question.minor
       .map((v) => {
@@ -77,9 +92,16 @@ const Question = () => {
       questionId: parseInt(id.substring(3), 36),
       userId: 1,
       score,
-      elapsedTimeMs: 1,
+      elapsedTimeMs: Date.now() - startTimestamp,
       repliedAnswer: repliedAnswer.map((r) => r.answer).join('|'),
     });
+  };
+
+  const formatTime = (totalSeconds: number) => {
+    const hrs = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+    return [hrs, mins, secs].map((v) => String(v).padStart(2, '0')).join(':');
   };
 
   if (!question)
@@ -93,6 +115,15 @@ const Question = () => {
 
   return (
     <div>
+      <div className="mb-2 text-xl font-bold">⏱ {formatTime(seconds)}</div>
+      <Button
+        onClick={() => {
+          setRunning((r) => !r);
+          setStartTimestamp(Date.now());
+        }}
+      >
+        Toggle
+      </Button>
       <MathJax>
         <div dangerouslySetInnerHTML={{ __html: question.content }}></div>
         <div className="mt-4 flex flex-col gap-2">
