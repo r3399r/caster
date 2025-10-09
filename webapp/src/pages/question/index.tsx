@@ -6,12 +6,12 @@ import IcLoader from 'src/assets/ic-loader.svg';
 import { MathJax } from 'better-react-mathjax';
 import { Button } from '@mui/material';
 import Modal from 'src/components/Modal';
-import { bn } from 'src/util/bignumber';
+import type { GetQuestionIdResponse } from 'src/model/backend/api/Question';
 
 const Question = () => {
   const { id } = useParams();
   const [open, setOpen] = useState<boolean>(false);
-  const [question, setQuestion] = useState<Question>();
+  const [question, setQuestion] = useState<GetQuestionIdResponse>();
   const [repliedAnswer, setRepliedAnswer] = useState<{ id: number; answer: string }[]>();
   const [seconds, setSeconds] = useState<number>(0);
   const [running, setRunning] = useState<boolean>(false);
@@ -55,45 +55,14 @@ const Question = () => {
   };
 
   const onSubmit = () => {
-    if (!id || !repliedAnswer || !question || !startTimestamp) return;
-
-    const totalScore = question.minor
-      .map((v) => {
-        if (v.type === 'SINGLE')
-          return repliedAnswer.find((r) => r.id === v.id)?.answer === v.answer ? 1 : 0;
-        else if (v.type === 'MULTIPLE') {
-          if (!v.options || !v.answer) return 1;
-
-          const replied = repliedAnswer.find((r) => r.id === v.id)?.answer ?? '';
-          if (replied === '') return 0;
-
-          const answerSet = new Set(v.answer.split(','));
-          const repliedSet = new Set(replied.split(','));
-
-          const missing = [...answerSet].filter((o) => !repliedSet.has(o)).length;
-          const extra = [...repliedSet].filter((o) => !answerSet.has(o)).length;
-
-          const n = v.options.split(',').length;
-          const k = missing + extra;
-
-          return n - 2 * k <= 0
-            ? 0
-            : bn(n - 2 * k)
-                .div(n)
-                .dp(4, 7)
-                .toNumber();
-        }
-        return 1;
-      })
-      .reduce((prev, cur) => prev.plus(cur), bn(0));
-    const score = totalScore.div(question.minor.length).dp(4, 7).toNumber();
+    console.log(id, repliedAnswer, startTimestamp);
+    if (!id || !repliedAnswer || !startTimestamp) return;
 
     questionEndpoint.postQuestionReply({
-      questionId: parseInt(id.substring(3), 36),
+      id: parseInt(id.substring(3), 36),
       userId: 1,
-      score,
       elapsedTimeMs: Date.now() - startTimestamp,
-      repliedAnswer: repliedAnswer.map((r) => r.answer).join('|'),
+      replied: repliedAnswer,
     });
   };
 

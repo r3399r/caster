@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS caster.user_stats (
     id INT UNSIGNED AUTO_INCREMENT,
     user_id INT UNSIGNED NOT NULL,
     category_id INT UNSIGNED NOT NULL,
-    total_questions INT UNSIGNED NOT NULL DEFAULT 0,
+    count INT UNSIGNED NOT NULL DEFAULT 0,
     scoring_rate DOUBLE NULL,
     created_at DATETIME(3) NULL,
     updated_at DATETIME(3) NULL,

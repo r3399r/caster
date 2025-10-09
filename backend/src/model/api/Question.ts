@@ -1,4 +1,6 @@
 import { Question } from 'src/model/entity/QuestionEntity';
+import { QuestionMinor } from 'src/model/entity/QuestionMinorEntity';
+import { Reply } from 'src/model/entity/ReplyEntity';
 import { Paginate, PaginationParams } from 'src/model/Pagination';
 
 export type PostQuestionRequest = {
@@ -15,13 +17,14 @@ export type PostQuestionRequest = {
 };
 
 export type PostQuestionReplyRequest = {
-  questionId: number;
+  id: number;
   userId?: number;
   deviceId?: string;
-  score: number;
   elapsedTimeMs: number;
-  repliedAnswer: string;
+  replied: { id: number; answer: string }[];
 };
+
+export type PostQuestionReplyResponse = Reply;
 
 export type GetQuestionParams = PaginationParams;
 
@@ -29,4 +32,6 @@ export type ModifiedQuestion = Question & { uid: string };
 
 export type GetQuestionResponse = Paginate<ModifiedQuestion>;
 
-export type GetQuestionIdResponse = Question;
+export type GetQuestionIdResponse = Omit<Question, 'minor'> & {
+  minor: Omit<QuestionMinor, 'answer'>[];
+};

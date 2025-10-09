@@ -137,7 +137,7 @@ Resources:
                 }
               }
             },
-            "/api/question/{id}": {
+            "/api/question/{uid}": {
               "get": {
                 "responses": {
                   "200": {
@@ -253,14 +253,23 @@ Resources:
             "postQuestionReply": {
               "type": "object",
               "properties": {
-                "questionId":{"type": "number"},
+                "id":{"type": "number"},
                 "userId":{"type": "number"},
                 "deviceId":{"type": "string"},
-                "score":{"type": "number", "minimum": 0, "maximum": 1},
                 "elapsedTimeMs":{"type": "number", "minimum": 0},
-                "repliedAnswer":{"type": "string"}
+                "replied": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type":"number"},
+                      "answer": {"type": "string"}
+                    },
+                    "required": ["id","answer"]
+                  }
+                }
               },
-              "required": ["questionId","score","elapsedTimeMs","repliedAnswer"]
+              "required": ["id","elapsedTimeMs","replied"]
             }
           },
           "x-amazon-apigateway-request-validators" : {

@@ -9,12 +9,14 @@ import {
   GetQuestionParams,
   GetQuestionResponse,
   PostQuestionReplyRequest,
+  PostQuestionReplyResponse,
   PostQuestionRequest,
 } from 'src/model/api/Question';
 import { QuestionEntity } from 'src/model/entity/QuestionEntity';
 import { QuestionMinorEntity } from 'src/model/entity/QuestionMinorEntity';
 import { ReplyEntity } from 'src/model/entity/ReplyEntity';
 import { BadRequestError } from 'src/model/error';
+import { bn } from 'src/utils/bignumber';
 import { genPagination } from 'src/utils/paginator';
 import { randomBase36 } from 'src/utils/random';
 import { UserService } from './UserService';
@@ -42,7 +44,14 @@ export class QuestionService {
     const question = await this.questionAccess.findOneOrFail({ where: { id } });
     if (question.rid !== rid) throw new BadRequestError('rid is not matched');
 
-    return question;
+    return {
+      ...question,
+      minor: question.minor.map((m) => {
+        const { answer, ...rest } = m;
+
+        return rest;
+      }),
+    };
   }
 
   public async getQuestionList(
@@ -98,7 +107,34 @@ export class QuestionService {
     };
   }
 
-  public async replyQuestion(data: PostQuestionReplyRequest) {
+  private calculateMultipleScore(
+    correct: string | null,
+    replied: string,
+    options: string | null
+  ): number {
+    if (!correct || !options) return 1;
+    if (replied === '') return 0;
+
+    const answerSet = new Set(correct.split(','));
+    const repliedSet = new Set(replied.split(','));
+
+    const missing = [...answerSet].filter((o) => !repliedSet.has(o)).length;
+    const extra = [...repliedSet].filter((o) => !answerSet.has(o)).length;
+
+    const n = options.split(',').length;
+    const k = missing + extra;
+
+    return n - 2 * k <= 0
+      ? 0
+      : bn(n - 2 * k)
+          .div(n)
+          .dp(4, 7)
+          .toNumber();
+  }
+
+  public async replyQuestion(
+    data: PostQuestionReplyRequest
+  ): Promise<PostQuestionReplyResponse> {
     if (!data.userId && !data.deviceId)
       throw new BadRequestError('Either userId or deviceId must be provided');
 
@@ -111,12 +147,35 @@ export class QuestionService {
       userId = user.id;
     }
 
+    const question = await this.questionAccess.findOneOrFail({
+      where: { id: data.id },
+    });
+    if (data.replied.length !== question.minor.length)
+      throw new BadRequestError('The number of replied answers is not matched');
+    const totalScore = question.minor
+      .map((v) => {
+        if (v.type === 'SINGLE')
+          return data.replied.find((r) => r.id === v.id)?.answer === v.answer
+            ? 1
+            : 0;
+        else if (v.type === 'MULTIPLE')
+          return this.calculateMultipleScore(
+            v.answer,
+            data.replied.find((r) => r.id === v.id)?.answer ?? '',
+            v.options
+          );
+
+        return 1;
+      })
+      .reduce((prev, cur) => prev.plus(cur), bn(0));
+    const score = totalScore.div(question.minor.length).dp(4, 7).toNumber();
+
     const replyEntity = new ReplyEntity();
-    replyEntity.questionId = data.questionId;
+    replyEntity.questionId = data.id;
     replyEntity.userId = userId;
-    replyEntity.score = data.score;
+    replyEntity.score = score;
     replyEntity.elapsedTimeMs = data.elapsedTimeMs;
-    replyEntity.repliedAnswer = data.repliedAnswer;
+    replyEntity.repliedAnswer = data.replied.map((r) => r.answer).join('|');
 
     return await this.replyAccess.save(replyEntity);
   }
