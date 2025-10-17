@@ -4,13 +4,14 @@ import { DbAccess } from 'src/dao/DbAccess';
 import { GatewayTimeoutError } from 'src/model/error/5XX/GatewayTimeoutError';
 import { LambdaContext, LambdaEvent, LambdaOutput } from 'src/model/Lambda';
 import question from 'src/routes/question';
-import { errorOutput, successOutput } from 'src/utils/LambdaHelper';
+import user from 'src/routes/user';
+import { errorOutput, initLambda, successOutput } from 'src/utils/LambdaHelper';
 
 const apiProcess = async (event: LambdaEvent): Promise<LambdaOutput> => {
   const db = bindings.get(DbAccess);
   let output: LambdaOutput;
   await db.startTransaction();
-  // initLambda(event);
+  initLambda(event);
 
   try {
     let res: unknown;
@@ -19,6 +20,9 @@ const apiProcess = async (event: LambdaEvent): Promise<LambdaOutput> => {
     switch (resource) {
       case 'question':
         res = await question(event);
+        break;
+      case 'user':
+        res = await user(event);
         break;
     }
 

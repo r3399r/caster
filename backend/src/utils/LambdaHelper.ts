@@ -1,7 +1,9 @@
+import { bindings } from 'src/bindings';
 import { HttpError } from 'src/model/error/HttpError';
-import { LambdaOutput } from 'src/model/Lambda';
+import { LambdaEvent, LambdaOutput } from 'src/model/Lambda';
 
-export const credentialSymbol = Symbol('credential');
+export const deviceIdSymbol = Symbol('deviceId');
+export const userIdSymbol = Symbol('userId');
 
 export const successOutput = <T>(res: T): LambdaOutput => ({
   statusCode: 200,
@@ -28,12 +30,13 @@ export const errorOutput = (e: unknown): LambdaOutput => {
   };
 };
 
-// export const initLambda = (event?: LambdaEvent): void => {
-//   bind<string>(credentialSymbol, event?.headers?.['x-credential'] ?? 'xx');
-// };
+export const initLambda = (event?: LambdaEvent): void => {
+  bind<string>(deviceIdSymbol, event?.headers?.['x-device-id'] ?? 'xx');
+  bind<string>(userIdSymbol, event?.headers?.['x-user-id'] ?? 'xx');
+};
 
-// const bind = <T>(bindingId: symbol, values: T): void => {
-//   if (bindings.isBound(bindingId) === false)
-//     bindings.bind<T>(bindingId).toConstantValue(values);
-//   else bindings.rebind<T>(bindingId).toConstantValue(values);
-// };
+const bind = <T>(bindingId: symbol, values: T): void => {
+  if (bindings.isBound(bindingId) === false)
+    bindings.bind<T>(bindingId).toConstantValue(values);
+  else bindings.rebindSync<T>(bindingId).toConstantValue(values);
+};
