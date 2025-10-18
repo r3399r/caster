@@ -29,6 +29,8 @@ export type PostQuestionReplyResponse = Reply;
 
 export type GetQuestionParams = PaginationParams & { categoryId: number };
 
+export type ModifiedQuestion = Question & { uid: string };
+
 export type GetQuestionResponse = Paginate<{
   uid: string;
   categoryId: number;
