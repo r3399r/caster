@@ -7,8 +7,11 @@ import { MathJax } from 'better-react-mathjax';
 import { Button } from '@mui/material';
 import Modal from 'src/components/Modal';
 import type { GetQuestionIdResponse } from 'src/model/backend/api/Question';
+import { useDispatch } from 'react-redux';
+import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 
 const Question = () => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const [open, setOpen] = useState<boolean>(false);
   const [question, setQuestion] = useState<GetQuestionIdResponse>();
@@ -58,12 +61,21 @@ const Question = () => {
     console.log(id, repliedAnswer, startTimestamp);
     if (!id || !repliedAnswer || !startTimestamp) return;
 
-    questionEndpoint.postQuestionReply({
-      id: parseInt(id.substring(3), 36),
-      userId: 1,
-      elapsedTimeMs: Date.now() - startTimestamp,
-      replied: repliedAnswer,
-    });
+    dispatch(startWaiting());
+    questionEndpoint
+      .postQuestionReply({
+        id: parseInt(id.substring(3), 36),
+        elapsedTimeMs: Date.now() - startTimestamp,
+        replied: repliedAnswer,
+      })
+      .then((res) => {
+        if (localStorage.getItem('userId') === '' && !!res)
+          localStorage.setItem('userId', res.data.userId.toString() || '');
+        setOpen(false);
+      })
+      .finally(() => {
+        dispatch(finishWaiting());
+      });
   };
 
   const formatTime = (totalSeconds: number) => {

@@ -25,10 +25,7 @@ export class UserService {
   @inject(userIdSymbol)
   private readonly userId!: string;
 
-  public async getUserByDeviceId(deviceId: string) {
-    const user = await this.userAccess.findOne({ where: { deviceId } });
-    if (user) return user;
-
+  public async createUserWithDeviceId(deviceId: string) {
     const userEntity = new UserEntity();
     userEntity.deviceId = deviceId;
 

@@ -18,8 +18,6 @@ export type PostQuestionRequest = {
 
 export type PostQuestionReplyRequest = {
   id: number;
-  userId?: number;
-  deviceId?: string;
   elapsedTimeMs: number;
   replied: { id: number; answer: string }[];
 };

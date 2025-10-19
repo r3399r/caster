@@ -15,10 +15,11 @@ import {
 import { QuestionEntity } from 'src/model/entity/QuestionEntity';
 import { QuestionMinorEntity } from 'src/model/entity/QuestionMinorEntity';
 import { ReplyEntity } from 'src/model/entity/ReplyEntity';
+import { User } from 'src/model/entity/UserEntity';
 import { BadRequestError } from 'src/model/error';
 import { bn } from 'src/utils/bignumber';
 import { compare } from 'src/utils/compare';
-import { userIdSymbol } from 'src/utils/LambdaHelper';
+import { deviceIdSymbol, userIdSymbol } from 'src/utils/LambdaHelper';
 import { genPagination } from 'src/utils/paginator';
 import { randomBase36 } from 'src/utils/random';
 import { UserService } from './UserService';
@@ -40,6 +41,8 @@ export class QuestionService {
   private readonly categoryAccess!: CategoryAccess;
   @inject(userIdSymbol)
   private readonly userId!: string;
+  @inject(deviceIdSymbol)
+  private readonly deviceId!: string;
 
   public async getQuestionByUid(uid: string): Promise<GetQuestionIdResponse> {
     const id = parseInt(uid.substring(3), 36);
@@ -171,16 +174,11 @@ export class QuestionService {
   public async replyQuestion(
     data: PostQuestionReplyRequest
   ): Promise<PostQuestionReplyResponse> {
-    if (!data.userId && !data.deviceId)
-      throw new BadRequestError('Either userId or deviceId must be provided');
-
-    let userId: number;
-    if (data.userId) userId = data.userId;
-    else {
-      const user = await this.userService.getUserByDeviceId(
-        data.deviceId ?? ''
-      );
-      userId = user.id;
+    let user: User;
+    try {
+      user = await this.userService.getUser();
+    } catch {
+      user = await this.userService.createUserWithDeviceId(this.deviceId);
     }
 
     const question = await this.questionAccess.findOneOrFail({
@@ -208,7 +206,7 @@ export class QuestionService {
 
     const replyEntity = new ReplyEntity();
     replyEntity.questionId = data.id;
-    replyEntity.userId = userId;
+    replyEntity.userId = user.id;
     replyEntity.score = score;
     replyEntity.elapsedTimeMs = data.elapsedTimeMs;
     replyEntity.repliedAnswer = data.replied.map((r) => r.answer).join('|');

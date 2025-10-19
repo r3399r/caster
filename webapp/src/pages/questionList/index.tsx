@@ -13,7 +13,11 @@ const QuestionList = () => {
 
   useEffect(() => {
     questionEndpoint
-      .getQuestion({ limit: LIMIT.toString(), offset: ((page - 1) * LIMIT).toString(), categoryId: 3 })
+      .getQuestion({
+        limit: LIMIT.toString(),
+        offset: ((page - 1) * LIMIT).toString(),
+        categoryId: 3,
+      })
       .then((res) => {
         setList(res?.data.data);
         setCount(res?.data.paginate.totalPages);
