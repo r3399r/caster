@@ -51,7 +51,7 @@ export class QuestionService {
     return {
       ...question,
       minor: question.minor.map((m) => {
-        const { answer: _answer, ...rest } = m;
+        const { answer, ...rest } = m;
 
         return rest;
       }),

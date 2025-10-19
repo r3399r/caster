@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { FindOneOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { Category, CategoryEntity } from 'src/model/entity/CategoryEntity';
 import { Database } from 'src/utils/Database';
 
@@ -15,6 +15,14 @@ export class CategoryAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOneOrFail<Category>(CategoryEntity.name, {
+      ...options,
+    });
+  }
+
+  public async find(options?: FindManyOptions<Category>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.find<Category>(CategoryEntity.name, {
       ...options,
     });
   }

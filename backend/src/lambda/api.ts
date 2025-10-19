@@ -3,6 +3,7 @@ import { bindings } from 'src/bindings';
 import { DbAccess } from 'src/dao/DbAccess';
 import { GatewayTimeoutError } from 'src/model/error/5XX/GatewayTimeoutError';
 import { LambdaContext, LambdaEvent, LambdaOutput } from 'src/model/Lambda';
+import category from 'src/routes/category';
 import question from 'src/routes/question';
 import user from 'src/routes/user';
 import { errorOutput, initLambda, successOutput } from 'src/utils/LambdaHelper';
@@ -23,6 +24,9 @@ const apiProcess = async (event: LambdaEvent): Promise<LambdaOutput> => {
         break;
       case 'user':
         res = await user(event);
+        break;
+      case 'category':
+        res = await category(event);
         break;
     }
 
