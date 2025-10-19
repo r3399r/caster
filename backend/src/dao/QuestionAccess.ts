@@ -57,7 +57,7 @@ export class QuestionAccess {
   }) {
     const qb = await this.createQueryBuilder();
     const findPromise = qb
-      .leftJoinAndSelect(
+      .innerJoinAndSelect(
         'question.category',
         'category',
         'category.id = :categoryId',

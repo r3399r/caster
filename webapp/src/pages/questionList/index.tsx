@@ -1,12 +1,15 @@
 import { Pagination } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import questionEndpoint from 'src/api/questionEndpoint';
 import type { ModifiedQuestion } from 'src/model/backend/api/Question';
+import type { RootState } from 'src/redux/store';
 
 const LIMIT = 100;
 
 const QuestionList = () => {
   const [list, setList] = useState<ModifiedQuestion[]>();
+  const { categoryId } = useSelector((state: RootState) => state.ui);
 
   const [page, setPage] = useState<number>(1);
   const [count, setCount] = useState<number>();
@@ -16,7 +19,7 @@ const QuestionList = () => {
       .getQuestion({
         limit: LIMIT.toString(),
         offset: ((page - 1) * LIMIT).toString(),
-        categoryId: 3,
+        categoryId: categoryId ?? 0,
       })
       .then((res) => {
         setList(res?.data.data);

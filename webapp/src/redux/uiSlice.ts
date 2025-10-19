@@ -1,11 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 export type UiState = {
   workload: number;
+  categoryId: number | null;
 };
 
 const initialState: UiState = {
   workload: 0,
+  categoryId: null,
 };
 
 export const uiSlice = createSlice({
@@ -18,9 +20,12 @@ export const uiSlice = createSlice({
     finishWaiting: (state: UiState) => {
       state.workload = state.workload - 1;
     },
+    setCategoryId: (state: UiState, action: PayloadAction<number>) => {
+      state.categoryId = action.payload;
+    },
   },
 });
 
-export const { startWaiting, finishWaiting } = uiSlice.actions;
+export const { startWaiting, finishWaiting, setCategoryId } = uiSlice.actions;
 
 export default uiSlice.reducer;

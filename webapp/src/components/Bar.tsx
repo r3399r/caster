@@ -1,9 +1,17 @@
 import { useNavigate } from 'react-router-dom';
+import randomcolor from 'randomcolor';
+import { useSelector } from 'react-redux';
+import type { RootState } from 'src/redux/store';
 
 const Bar = () => {
   const navigate = useNavigate();
+  const { categoryId } = useSelector((rootState: RootState) => rootState.ui);
+
   return (
-    <div className="flex items-center gap-5 bg-blue-300 px-5 py-3">
+    <div
+      className="flex items-center gap-5 px-5 py-3"
+      style={{ background: randomcolor({ luminosity: 'light', seed: categoryId ?? 'default' }) }}
+    >
       <div className="font-bold text-blue-900">Practice Makes Perfect</div>
       <div className="cursor-pointer" onClick={() => navigate('/')}>
         題目清單

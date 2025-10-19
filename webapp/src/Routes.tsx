@@ -6,6 +6,7 @@ import AppLayout from './AppLayout';
 const QuestionList = lazy(() => import('./pages/questionList'));
 const Question = lazy(() => import('./pages/question'));
 const User = lazy(() => import('./pages/user'));
+const Category = lazy(() => import('./pages/category'));
 
 const AppRoutes = () => {
   const router = createBrowserRouter([
@@ -14,6 +15,7 @@ const AppRoutes = () => {
       children: [
         { path: '/', element: <QuestionList /> },
         { path: '/user', element: <User /> },
+        { path: '/category', element: <Category /> },
         { path: '/q/:id', element: <Question /> },
         { path: '/*', element: <Navigate to="/" /> },
       ],
