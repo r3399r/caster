@@ -54,6 +54,7 @@ export class QuestionService {
 
     return {
       uid: question.rid + question.id.toString(36),
+      title: question.title,
       categoryId: question.categoryId,
       content: question.content,
       discussionUrl: question.discussionUrl,
@@ -94,6 +95,7 @@ export class QuestionService {
     return {
       data: question.map((v) => ({
         uid: v.rid + v.id.toString(36),
+        title: v.title,
         categoryId: v.categoryId,
         source: v.source,
         tag: v.tag,
@@ -119,7 +121,8 @@ export class QuestionService {
     questionEntity.rid = randomBase36(3);
     questionEntity.categoryId = category.id;
     questionEntity.content = data.content;
-    questionEntity.discussionUrl = data.discussionUrl;
+    questionEntity.source = data.source;
+    questionEntity.discussionUrl = 'a';
 
     const newQuestionEntity = await this.questionAccess.save(questionEntity);
 

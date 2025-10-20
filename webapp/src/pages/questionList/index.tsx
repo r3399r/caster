@@ -45,7 +45,8 @@ const QuestionList = () => {
           <TableHead>
             <TableRow>
               <TableCell>題目ID</TableCell>
-              <TableCell>標籤</TableCell>
+              <TableCell>標題</TableCell>
+              <TableCell>Tag</TableCell>
               <TableCell>得分率</TableCell>
               <TableCell>平均耗時(秒)</TableCell>
               <TableCell>答題於</TableCell>
@@ -63,6 +64,7 @@ const QuestionList = () => {
                     {row.uid}
                   </a>
                 </TableCell>
+                <TableCell>{row.title}</TableCell>
                 <TableCell>
                   <div className="flex gap-1">
                     {row.tag.map((t) => (

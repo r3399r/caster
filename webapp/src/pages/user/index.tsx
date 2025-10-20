@@ -49,7 +49,8 @@ const User = () => {
               <TableRow>
                 <TableCell>答題時間</TableCell>
                 <TableCell>題目ID</TableCell>
-                <TableCell>標籤</TableCell>
+                <TableCell>標題</TableCell>
+                <TableCell>Tag</TableCell>
                 <TableCell>得分</TableCell>
                 <TableCell>耗時(秒)</TableCell>
               </TableRow>
@@ -69,6 +70,7 @@ const User = () => {
                       {row.questionUid}
                     </a>
                   </TableCell>
+                  <TableCell>{row.questionTitle}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
                       {row.tag.map((t) => (

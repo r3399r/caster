@@ -14,6 +14,7 @@ export type GetUserDetailResponse = {
   reply: Paginate<{
     id: number;
     questionUid: string;
+    questionTitle: string;
     tag: Tag[];
     score: number;
     elapsedTimeMs: number;

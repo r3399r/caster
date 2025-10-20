@@ -18,6 +18,7 @@ import { Tag, TagEntity } from './TagEntity';
 export type Question = {
   id: number;
   rid: string;
+  title: string;
   categoryId: number;
   category: Category;
   content: string;
@@ -40,6 +41,9 @@ export class QuestionEntity implements Question {
 
   @Column({ type: 'varchar', length: 16 })
   rid!: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  title!: string;
 
   @Column({ type: 'int', unsigned: true, name: 'category_id' })
   categoryId!: number;

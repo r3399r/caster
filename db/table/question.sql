@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS caster.question (
     id INT UNSIGNED AUTO_INCREMENT,
     rid VARCHAR(16) NOT NULL,
+    title VARCHAR(255) NOT NULL,
     category_id INT UNSIGNED NOT NULL,
     content TEXT NOT NULL,
     discussion_url VARCHAR(255) NULL,

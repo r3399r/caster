@@ -6,7 +6,7 @@ import { Paginate, PaginationParams } from 'src/model/Pagination';
 export type PostQuestionRequest = {
   categoryName: string;
   content: string;
-  discussionUrl: string;
+  source: string;
   minor: {
     type: 'SINGLE' | 'MULTIPLE';
     orderIndex: number;
@@ -28,6 +28,7 @@ export type GetQuestionParams = PaginationParams & { categoryId: number };
 
 export type ModifiedQuestion = {
   uid: string;
+  title: string;
   categoryId: number;
   source: string | null;
   tag: Tag[];
@@ -42,6 +43,7 @@ export type GetQuestionResponse = Paginate<ModifiedQuestion>;
 
 export type GetQuestionIdResponse = {
   uid: string;
+  title: string;
   categoryId: number;
   content: string;
   discussionUrl: string | null;

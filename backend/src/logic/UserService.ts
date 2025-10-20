@@ -83,6 +83,7 @@ export class UserService {
         data: reply.map((v) => ({
           id: v.id,
           questionUid: v.question.rid + v.question.id.toString(36),
+          questionTitle: v.question.title,
           tag: v.question.tag,
           score: v.score,
           elapsedTimeMs: v.elapsedTimeMs,

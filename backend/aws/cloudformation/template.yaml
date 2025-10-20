@@ -391,7 +391,7 @@ Resources:
               "properties": {
                 "categoryName":{"type": "string"},
                 "content":{"type": "string"},
-                "discussionUrl":{"type": "string"},
+                "source":{"type": "string"},
                 "minor": {
                   "type": "array",
                   "items": {
