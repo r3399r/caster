@@ -72,7 +72,9 @@ const QuestionList = () => {
                     ))}
                   </div>
                 </TableCell>
-                <TableCell>{row.scoringRate ?? '-'}</TableCell>
+                <TableCell>
+                  {row.scoringRate ? bn(row.scoringRate).times(100).dp(2).toFormat() + '%' : '-'}
+                </TableCell>
                 <TableCell>{bn(row.avgElapsedTimeMs).div(1000).dp(1).toFormat()}</TableCell>
                 <TableCell>
                   {row.lastRepliedAt

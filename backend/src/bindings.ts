@@ -9,6 +9,7 @@ import { UserAccess } from './dao/UserAccess';
 import { UserStatsAccess } from './dao/UserStatsAccess';
 import { CategoryService } from './logic/CategoryService';
 import { QuestionService } from './logic/QuestionService';
+import { StatsService } from './logic/StatsService';
 import { UserService } from './logic/UserService';
 import { CategoryEntity } from './model/entity/CategoryEntity';
 import { QuestionEntity } from './model/entity/QuestionEntity';
@@ -47,6 +48,7 @@ container.bind(UserStatsAccess).toSelf();
 container.bind(QuestionService).toSelf();
 container.bind(UserService).toSelf();
 container.bind(CategoryService).toSelf();
+container.bind(StatsService).toSelf();
 
 // AWS
 container.bind(SQS).toDynamicValue(() => new SQS());

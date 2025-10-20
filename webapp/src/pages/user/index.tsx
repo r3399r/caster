@@ -41,7 +41,7 @@ const User = () => {
     <div>
       <div className="mb-2 text-2xl font-bold">答題記錄</div>
       <div>總答題數: {result?.count ?? '-'}</div>
-      <div>平均得分: {result?.scoringRate ?? '-'}</div>
+      <div>平均得分: {result?.scoringRate ? bn(result.scoringRate).dp(2).toFormat() : '-'}</div>
       <div className="mt-2">
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -51,7 +51,7 @@ const User = () => {
                 <TableCell>題目ID</TableCell>
                 <TableCell>標題</TableCell>
                 <TableCell>Tag</TableCell>
-                <TableCell>得分</TableCell>
+                <TableCell>分數(滿分1)</TableCell>
                 <TableCell>耗時(秒)</TableCell>
               </TableRow>
             </TableHead>

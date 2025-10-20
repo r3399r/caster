@@ -468,6 +468,33 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
+  LambdaStatsLoader:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures: [arm64]
+      Handler: index.statsLoader
+      Runtime: nodejs20.x
+      FunctionName: !Sub ${Project}-${TargetEnvr}-stats-loader
+      Role: !GetAtt ExecutionRole.Arn
+      CodeUri: ../../lib/src
+      MemorySize: 200
+      Timeout: 30
+      Layers: [!Ref LambdaLayer]
+      Environment:
+        Variables:
+          PROJECT: !Sub ${Project}
+          ENVR: !Sub ${TargetEnvr}
+          DB_HOST:
+            Fn::ImportValue: !Sub celestial-studio-${TargetEnvr}-db-endpoint
+          DB_PWD: !Sub '{{resolve:ssm:mysql-${TargetEnvr}-${Project}-pwd}}'
+  # InvokePermissionStatsLoader:
+  #   Type: AWS::Lambda::Permission
+  #   DependsOn: [LambdaStatsLoader]
+  #   Properties:
+  #     FunctionName: !Sub ${Project}-${TargetEnvr}-stats-loader
+  #     Action: 'lambda:InvokeFunction'
+  #     Principal: events.amazonaws.com
+  #     SourceArn: !GetAtt EventBridgeGiftLoader.Arn
   LambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
