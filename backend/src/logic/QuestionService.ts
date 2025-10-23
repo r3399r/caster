@@ -62,7 +62,6 @@ export class QuestionService {
       title: question.title,
       categoryId: question.categoryId,
       content: question.content,
-      discussionUrl: question.discussionUrl,
       source: question.source,
       minor: question.minor.map((m) => {
         const { answer, ...rest } = m;
@@ -73,10 +72,13 @@ export class QuestionService {
       count: question.count,
       scoringRate: question.scoringRate,
       avgElapsedTimeMs: question.avgElapsedTimeMs,
-      hasReplied: question.reply.length > 0,
-      lastRepliedAt:
+      lastReply:
         question.reply.length > 0
-          ? question.reply.sort(compare('createdAt', 'desc'))[0].createdAt
+          ? {
+              ...question.reply.sort(compare('createdAt', 'desc'))[0],
+              actualAnswer: question.minor.map((m) => m.answer).join('|'),
+              discussionUrl: question.discussionUrl,
+            }
           : null,
     };
   }
@@ -258,6 +260,12 @@ export class QuestionService {
     replyEntity.elapsedTimeMs = data.elapsedTimeMs;
     replyEntity.repliedAnswer = data.replied.map((r) => r.answer).join('|');
 
-    return await this.replyAccess.save(replyEntity);
+    const newReply = await this.replyAccess.save(replyEntity);
+
+    return {
+      ...newReply,
+      actualAnswer: question.minor.map((m) => m.answer).join('|'),
+      discussionUrl: question.discussionUrl,
+    };
   }
 }

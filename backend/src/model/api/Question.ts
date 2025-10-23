@@ -25,7 +25,12 @@ export type PostQuestionReplyRequest = {
   replied: { id: number; answer: string }[];
 };
 
-export type PostQuestionReplyResponse = Reply;
+export type ModifiedReply = Reply & {
+  actualAnswer: string;
+  discussionUrl: string | null;
+};
+
+export type PostQuestionReplyResponse = ModifiedReply;
 
 export type GetQuestionParams = PaginationParams & { categoryId: number };
 
@@ -48,13 +53,11 @@ export type GetQuestionIdResponse = {
   title: string;
   categoryId: number;
   content: string;
-  discussionUrl: string | null;
   source: string | null;
   minor: Omit<QuestionMinor, 'answer'>[];
   tag: Tag[];
   count: number;
   scoringRate: number | null;
   avgElapsedTimeMs: number | null;
-  hasReplied: boolean;
-  lastRepliedAt: string | null;
+  lastReply: ModifiedReply | null;
 };

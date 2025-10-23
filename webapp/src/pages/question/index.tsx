@@ -6,9 +6,10 @@ import IcLoader from 'src/assets/ic-loader.svg';
 import { MathJax } from 'better-react-mathjax';
 import { Button } from '@mui/material';
 import Modal from 'src/components/Modal';
-import type { GetQuestionIdResponse } from 'src/model/backend/api/Question';
+import type { GetQuestionIdResponse, ModifiedReply } from 'src/model/backend/api/Question';
 import { useDispatch } from 'react-redux';
 import { finishWaiting, setCategoryId, startWaiting } from 'src/redux/uiSlice';
+import { bn } from 'src/util/bignumber';
 
 const Question = () => {
   const dispatch = useDispatch();
@@ -19,15 +20,25 @@ const Question = () => {
   const [seconds, setSeconds] = useState<number>(0);
   const [running, setRunning] = useState<boolean>(false);
   const [startTimestamp, setStartTimestamp] = useState<number>();
+  const [showNotification, setShowNotification] = useState<boolean>(true);
+  const [replyResult, setReplyResult] = useState<ModifiedReply>();
 
   useEffect(() => {
     questionEndpoint.getQuestionId(id ?? '').then((res) => {
-      setQuestion(res?.data);
-      setRepliedAnswer(res?.data.minor.map((v) => ({ id: v.id, answer: '' })));
+      if (res === undefined) return;
+      setQuestion(res.data);
+      setRepliedAnswer(res.data.minor.map((v) => ({ id: v.id, answer: '' })));
 
-      const categoryId = res?.data.categoryId ?? -1;
+      const categoryId = res.data.categoryId ?? -1;
       localStorage.setItem('categoryId', categoryId.toString());
       dispatch(setCategoryId(categoryId));
+
+      if (res.data.lastReply === null) setShowNotification(true);
+      else {
+        setShowNotification(false);
+        setReplyResult(res.data.lastReply);
+        setSeconds(bn(res.data.lastReply.elapsedTimeMs).div(1000).dp(0).toNumber());
+      }
     });
   }, [id]);
 
@@ -75,6 +86,8 @@ const Question = () => {
         if (localStorage.getItem('userId') === null && !!res)
           localStorage.setItem('userId', res.data.userId.toString() || '');
         setOpen(false);
+        setReplyResult(res?.data);
+        setRunning(false);
       })
       .finally(() => {
         dispatch(finishWaiting());
@@ -97,17 +110,45 @@ const Question = () => {
       </div>
     );
 
+  if (showNotification)
+    return (
+      <div>
+        <div className="border p-4">
+          <p>
+            題目ID: <span className="font-bold text-blue-600">{question.uid}</span>
+          </p>
+          <p>
+            標題: <span className="font-bold">{question.title}</span>
+          </p>
+          <p>
+            Tag:{' '}
+            {question.tag.map((t) => (
+              <span className="mr-1 rounded border px-1">{t.name}</span>
+            ))}
+          </p>
+          <p className="my-4">
+            提醒您，在按下「開始」之後便會開始計時，請確保您有充足且完整的時間作答，以獲得客觀的統計結果。
+          </p>
+          <div className="text-center">
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => {
+                setShowNotification(false);
+                setRunning((r) => !r);
+                setStartTimestamp(Date.now());
+              }}
+            >
+              開始
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+
   return (
     <div>
       <div className="mb-2 text-xl font-bold">⏱️ {formatTime(seconds)}</div>
-      <Button
-        onClick={() => {
-          setRunning((r) => !r);
-          setStartTimestamp(Date.now());
-        }}
-      >
-        Toggle
-      </Button>
       <MathJax>
         <div dangerouslySetInnerHTML={{ __html: question.content }}></div>
         <div className="mt-4 flex flex-col gap-2">
@@ -159,11 +200,36 @@ const Question = () => {
           })}
         </div>
       </MathJax>
-      <div className="mt-4 text-right">
-        <Button variant="contained" onClick={() => setOpen(true)}>
-          送出
-        </Button>
-      </div>
+      {!replyResult && (
+        <div className="mt-4 text-right">
+          <Button variant="contained" onClick={() => setOpen(true)}>
+            送出
+          </Button>
+        </div>
+      )}
+      {replyResult && (
+        <div className="mt-4 border p-4">
+          <div>
+            <div>你的分數: {replyResult.score} (滿分1)</div>
+            <div>你的答案: {replyResult.repliedAnswer}</div>
+            <div>正確答案: {replyResult.actualAnswer}</div>
+            {replyResult.discussionUrl && (
+              <div className="mt-2">
+                如果你有什麼想提問的，歡迎到{' '}
+                <a
+                  className="text-blue-600"
+                  href={replyResult.discussionUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  討論區
+                </a>{' '}
+                跟大家一起討論題目唷!
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <Modal open={open} onClose={() => setOpen(false)}>
         <>
           <div>請確認你的答案</div>

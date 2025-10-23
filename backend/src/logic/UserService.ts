@@ -65,6 +65,9 @@ export class UserService {
     const [reply, total] = await this.replyAccess.findAndCount({
       where: {
         userId: isNaN(Number(this.userId)) ? 0 : Number(this.userId),
+        question: {
+          categoryId: params.categoryId,
+        },
       },
       relations: {
         question: { tag: true },

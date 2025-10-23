@@ -413,7 +413,7 @@ Resources:
                   }
                 }
               },
-              "required": ["category","content","imageUrl","source","tag"]
+              "required": ["category","title","content","imageUrl","source","tag"]
             },
             "postQuestionReply": {
               "type": "object",
