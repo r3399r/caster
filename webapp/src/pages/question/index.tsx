@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import questionEndpoint from 'src/api/questionEndpoint';
 import type { Question } from 'src/model/backend/entity/QuestionEntity';
 import IcLoader from 'src/assets/ic-loader.svg';
@@ -14,6 +14,7 @@ import { encrypt } from 'src/util/crypto';
 
 const Question = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { id } = useParams();
   const [open, setOpen] = useState<boolean>(false);
   const [question, setQuestion] = useState<GetQuestionIdResponse>();
@@ -26,12 +27,14 @@ const Question = () => {
 
   useEffect(() => {
     questionEndpoint.getQuestionId(id ?? '').then((res) => {
-      if (res === undefined) return;
+      if (res === undefined) {
+        navigate('/category');
+        return;
+      }
       setQuestion(res.data);
       setRepliedAnswer(res.data.minor.map((v) => ({ id: v.id, answer: '' })));
 
-      const categoryId = res.data.categoryId ?? -1;
-      localStorage.setItem('categoryId', categoryId.toString());
+      const categoryId = res.data.categoryId;
       dispatch(setCategoryId(categoryId));
 
       if (res.data.lastReply === null) setShowNotification(true);
@@ -41,7 +44,7 @@ const Question = () => {
         setSeconds(bn(res.data.lastReply.elapsedTimeMs).div(1000).dp(0).toNumber());
       }
     });
-  }, [id]);
+  }, [id, dispatch, navigate]);
 
   useEffect(() => {
     let interval: number | undefined;

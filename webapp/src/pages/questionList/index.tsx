@@ -9,32 +9,48 @@ import {
   TableRow,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import questionEndpoint from 'src/api/questionEndpoint';
 import type { ModifiedQuestion } from 'src/model/backend/api/Question';
-import type { RootState } from 'src/redux/store';
+import { setCategoryId as reduxSetCategoryId } from 'src/redux/uiSlice';
 import { bn } from 'src/util/bignumber';
 
 const LIMIT = 100;
 
 const QuestionList = () => {
-  const { categoryId } = useSelector((state: RootState) => state.ui);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [list, setList] = useState<ModifiedQuestion[]>();
   const [page, setPage] = useState<number>(1);
   const [count, setCount] = useState<number>();
+  const [categoryId, setCategoryId] = useState<number>();
 
   useEffect(() => {
+    const tmpCategoryId = searchParams.get('categoryId');
+    if (isNaN(Number(tmpCategoryId))) {
+      navigate('/category');
+      return;
+    }
+    setCategoryId(Number(tmpCategoryId));
+    dispatch(reduxSetCategoryId(Number(tmpCategoryId)));
+  }, [searchParams, dispatch, navigate]);
+
+  useEffect(() => {
+    if (!categoryId) return;
+
     questionEndpoint
       .getQuestion({
         limit: LIMIT.toString(),
         offset: ((page - 1) * LIMIT).toString(),
-        categoryId: categoryId ?? 0,
+        categoryId,
       })
       .then((res) => {
         setList(res?.data.data);
         setCount(res?.data.paginate.totalPages);
       });
-  }, [page]);
+  }, [page, categoryId]);
 
   return (
     <div>

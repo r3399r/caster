@@ -17,12 +17,22 @@ const Bar = () => {
       }}
     >
       <div className="font-bold text-blue-900">Practice Makes Perfect</div>
-      <div className="cursor-pointer" onClick={() => navigate('/')}>
-        題目清單
-      </div>
-      <div className="cursor-pointer" onClick={() => navigate('/user')}>
-        答題記錄
-      </div>
+      {!!categoryId && (
+        <>
+          <div
+            className="cursor-pointer"
+            onClick={() => navigate(`/list?categoryId=${categoryId}`)}
+          >
+            題目清單
+          </div>
+          <div
+            className="cursor-pointer"
+            onClick={() => navigate(`/user?categoryId=${categoryId}`)}
+          >
+            答題記錄
+          </div>
+        </>
+      )}
     </div>
   );
 };

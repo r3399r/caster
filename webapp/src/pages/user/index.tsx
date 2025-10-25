@@ -9,33 +9,49 @@ import {
   TableRow,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import userEndpoint from 'src/api/userEndpoint';
 import type { GetUserDetailResponse } from 'src/model/backend/api/User';
-import type { RootState } from 'src/redux/store';
 import { format } from 'date-fns';
 import { bn } from 'src/util/bignumber';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { setCategoryId as reduxSetCategoryId } from 'src/redux/uiSlice';
 
 const LIMIT = 100;
 
 const User = () => {
-  const { categoryId } = useSelector((state: RootState) => state.ui);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [result, setResult] = useState<GetUserDetailResponse>();
   const [page, setPage] = useState<number>(1);
   const [count, setCount] = useState<number>();
+  const [searchParams] = useSearchParams();
+  const [categoryId, setCategoryId] = useState<number>();
 
   useEffect(() => {
+    const tmpCategoryId = searchParams.get('categoryId');
+    if (isNaN(Number(tmpCategoryId))) {
+      navigate('/category');
+      return;
+    }
+    setCategoryId(Number(tmpCategoryId));
+    dispatch(reduxSetCategoryId(Number(tmpCategoryId)));
+  }, [searchParams, dispatch, navigate]);
+
+  useEffect(() => {
+    if (!categoryId) return;
+
     userEndpoint
       .getUserDetail({
         limit: LIMIT.toString(),
         offset: ((page - 1) * LIMIT).toString(),
-        categoryId: categoryId ?? 0,
+        categoryId,
       })
       .then((res) => {
         setResult(res?.data);
         setCount(res?.data.reply.paginate.totalPages);
       });
-  }, [page]);
+  }, [page, categoryId]);
 
   return (
     <div>

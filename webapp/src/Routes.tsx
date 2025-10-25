@@ -14,12 +14,12 @@ const AppRoutes = () => {
     {
       element: <AppLayout />,
       children: [
-        { path: '/', element: <QuestionList /> },
+        { path: '/list', element: <QuestionList /> },
         { path: '/user', element: <User /> },
         { path: '/category', element: <Category /> },
         { path: '/q/:id', element: <Question /> },
         { path: '/preview', element: <Preview /> },
-        { path: '/*', element: <Navigate to="/" /> },
+        { path: '/*', element: <Navigate to="/list" /> },
       ],
     },
   ]);
