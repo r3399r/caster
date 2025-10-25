@@ -54,6 +54,9 @@ export class QuestionAccess {
     userId: number;
     take: number;
     skip: number;
+    orderBy: string;
+    orderDirection: 'ASC' | 'DESC';
+    title?: string;
   }) {
     const qb = await this.createQueryBuilder();
     const findPromise = qb
@@ -68,8 +71,17 @@ export class QuestionAccess {
       })
       .leftJoinAndSelect('question.tag', 'tag');
 
+    const listFindPromise = findPromise.orderBy(
+      `question.${data.orderBy}`,
+      data.orderDirection
+    );
+    if (data.title)
+      listFindPromise.where('question.title like :title', {
+        title: `%${data.title}%`,
+      });
+
     return (await Promise.all([
-      findPromise.take(data.take).skip(data.skip).getMany(),
+      listFindPromise.getMany(),
       findPromise.getCount(),
     ])) as [Question[], number];
   }

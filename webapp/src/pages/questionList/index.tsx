@@ -45,6 +45,9 @@ const QuestionList = () => {
         limit: LIMIT.toString(),
         offset: ((page - 1) * LIMIT).toString(),
         categoryId,
+        // orderBy: 'avgElapsedTimeMs',
+        // orderDirection: 'ASC',
+        // title: '長',
       })
       .then((res) => {
         setList(res?.data.data);
@@ -89,7 +92,7 @@ const QuestionList = () => {
                   {row.scoringRate ? bn(row.scoringRate).times(100).dp(2).toFormat() + '%' : '-'}
                 </TableCell>
                 <TableCell>{bn(row.avgElapsedTimeMs).div(1000).dp(1).toFormat()}</TableCell>
-                <TableCell>{row.lastReply ? '✔️' : '❌'}</TableCell>
+                <TableCell>{row.lastReply ? '已作答' : '尚未作答'}</TableCell>
               </TableRow>
             ))}
           </TableBody>

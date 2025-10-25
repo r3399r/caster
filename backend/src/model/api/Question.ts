@@ -32,7 +32,12 @@ export type ModifiedReply = Reply & {
 
 export type PostQuestionReplyResponse = ModifiedReply;
 
-export type GetQuestionParams = PaginationParams & { categoryId: number };
+export type GetQuestionParams = PaginationParams & {
+  categoryId: number;
+  orderBy?: string;
+  orderDirection?: string;
+  title?: string;
+};
 
 export type ModifiedQuestion = {
   uid: string;

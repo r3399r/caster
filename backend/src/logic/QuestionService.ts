@@ -92,11 +92,18 @@ export class QuestionService {
     const limit = params?.limit ? Number(params.limit) : LIMIT;
     const offset = params?.offset ? Number(params.offset) : OFFSET;
 
+    let orderDirection: 'ASC' | 'DESC' = 'ASC';
+    if (params.orderDirection === 'ASC' || params.orderDirection === 'DESC')
+      orderDirection = params.orderDirection;
+
     const [question, total] = await this.questionAccess.findAndCount({
       categoryId: params.categoryId,
       userId: isNaN(Number(this.userId)) ? 0 : Number(this.userId),
       take: limit,
       skip: offset,
+      orderBy: params.orderBy ?? 'id',
+      orderDirection,
+      title: params.title,
     });
 
     return {
