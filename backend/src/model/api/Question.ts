@@ -37,6 +37,8 @@ export type GetQuestionParams = PaginationParams & {
   orderBy?: string;
   orderDirection?: string;
   title?: string;
+  hasReply?: 'true' | 'false';
+  tags?: string;
 };
 
 export type ModifiedQuestion = {

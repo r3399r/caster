@@ -57,6 +57,8 @@ export class QuestionAccess {
     orderBy: string;
     orderDirection: 'ASC' | 'DESC';
     title?: string;
+    hasReply?: boolean;
+    tags?: number[];
   }) {
     const qb = await this.createQueryBuilder();
     const findPromise = qb
@@ -71,17 +73,28 @@ export class QuestionAccess {
       })
       .leftJoinAndSelect('question.tag', 'tag');
 
-    const listFindPromise = findPromise.orderBy(
-      `question.${data.orderBy}`,
-      data.orderDirection
-    );
     if (data.title)
-      listFindPromise.where('question.title like :title', {
+      findPromise.andWhere('question.title like :title', {
         title: `%${data.title}%`,
       });
+    if (data.hasReply === true) findPromise.andWhere('reply.id IS NOT NULL');
+
+    if (data.hasReply === false) findPromise.andWhere('reply.id IS NULL');
+
+    if (data.tags !== undefined && data.tags.length > 0)
+      findPromise.innerJoin(
+        'question.tag',
+        'tagFilter',
+        'tagFilter.id IN (:...tagIds)',
+        { tagIds: data.tags }
+      );
 
     return (await Promise.all([
-      listFindPromise.getMany(),
+      findPromise
+        .orderBy(`question.${data.orderBy}`, data.orderDirection)
+        .skip(data.skip)
+        .take(data.take)
+        .getMany(),
       findPromise.getCount(),
     ])) as [Question[], number];
   }

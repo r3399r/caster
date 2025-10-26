@@ -96,6 +96,11 @@ export class QuestionService {
     if (params.orderDirection === 'ASC' || params.orderDirection === 'DESC')
       orderDirection = params.orderDirection;
 
+    let hasReply: boolean | undefined = undefined;
+    if (params.hasReply === 'true') hasReply = true;
+
+    if (params.hasReply === 'false') hasReply = false;
+
     const [question, total] = await this.questionAccess.findAndCount({
       categoryId: params.categoryId,
       userId: isNaN(Number(this.userId)) ? 0 : Number(this.userId),
@@ -104,6 +109,10 @@ export class QuestionService {
       orderBy: params.orderBy ?? 'id',
       orderDirection,
       title: params.title,
+      hasReply,
+      tags: params.tags
+        ? params.tags.split(',').map((v) => Number(v))
+        : undefined,
     });
 
     return {

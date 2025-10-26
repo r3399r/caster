@@ -30,7 +30,7 @@ const User = () => {
 
   useEffect(() => {
     const tmpCategoryId = searchParams.get('categoryId');
-    if (isNaN(Number(tmpCategoryId))) {
+    if (tmpCategoryId === null || isNaN(Number(tmpCategoryId))) {
       navigate('/category');
       return;
     }
