@@ -22,7 +22,7 @@ export type Question = {
   categoryId: number;
   category: Category;
   content: string;
-  discussionUrl: string | null;
+  fbPostId: string | null;
   source: string | null;
   minor: QuestionMinor[];
   reply: Reply[];
@@ -58,10 +58,10 @@ export class QuestionEntity implements Question {
   @Column({
     type: 'varchar',
     length: 255,
-    name: 'discussion_url',
+    name: 'fb_post_id',
     default: null,
   })
-  discussionUrl: string | null = null;
+  fbPostId: string | null = null;
 
   @Column({ type: 'varchar', length: 255, default: null })
   source: string | null = null;

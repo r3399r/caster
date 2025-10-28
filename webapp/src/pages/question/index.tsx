@@ -238,12 +238,12 @@ const Question = () => {
             <div>你的分數: {replyResult.score} (滿分1)</div>
             <div>你的答案: {replyResult.repliedAnswer}</div>
             <div>正確答案: {replyResult.actualAnswer}</div>
-            {replyResult.discussionUrl && (
+            {replyResult.fbPostId && (
               <div className="mt-2">
                 如果你有什麼想提問的，歡迎到{' '}
                 <a
                   className="text-blue-600 underline"
-                  href={replyResult.discussionUrl}
+                  href={`https://facebook.com/${replyResult.fbPostId}`}
                   target="_blank"
                   rel="noreferrer"
                 >

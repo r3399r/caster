@@ -27,7 +27,7 @@ export type PostQuestionReplyRequest = {
 
 export type ModifiedReply = Reply & {
   actualAnswer: string;
-  discussionUrl: string | null;
+  fbPostId: string | null;
 };
 
 export type PostQuestionReplyResponse = ModifiedReply;

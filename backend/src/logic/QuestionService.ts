@@ -79,7 +79,7 @@ export class QuestionService {
           ? {
               ...question.reply.sort(compare('createdAt', 'desc'))[0],
               actualAnswer: question.minor.map((m) => m.answer).join('|'),
-              discussionUrl: question.discussionUrl,
+              fbPostId: question.fbPostId,
             }
           : null,
     };
@@ -194,7 +194,7 @@ export class QuestionService {
     questionEntity.title = data.title;
     questionEntity.content = data.content;
     questionEntity.source = data.source;
-    questionEntity.discussionUrl = `https://facebook.com/${fbPost.post_id}`;
+    questionEntity.fbPostId = fbPost.post_id;
     questionEntity.tag = tagEntities;
 
     const newQuestionEntity = await this.questionAccess.save(questionEntity);
@@ -292,7 +292,7 @@ export class QuestionService {
     return {
       ...newReply,
       actualAnswer: question.minor.map((m) => m.answer).join('|'),
-      discussionUrl: question.discussionUrl,
+      fbPostId: question.fbPostId,
     };
   }
 }

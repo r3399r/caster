@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS caster.question (
     title VARCHAR(255) NOT NULL,
     category_id INT UNSIGNED NOT NULL,
     content TEXT NOT NULL,
-    discussion_url VARCHAR(255) NULL,
+    fb_post_id VARCHAR(255) NULL,
     source VARCHAR(255) NULL,
     count INT UNSIGNED NOT NULL DEFAULT 0,
     scoring_rate DOUBLE NULL,

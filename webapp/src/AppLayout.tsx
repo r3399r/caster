@@ -9,15 +9,20 @@ const AppLayout = () => {
   const [ready, setReady] = useState<boolean>(false);
 
   useEffect(() => {
+    const deviceId = localStorage.getItem('deviceId');
+    const userId = localStorage.getItem('userId');
+    if (deviceId !== null && userId !== null) {
+      setReady(true);
+      return;
+    }
     userEndpoint.getUser().then((res) => {
       if (!res) return;
       if (res.data === null) {
-        if (localStorage.getItem('deviceId') === null) localStorage.setItem('deviceId', uuidv4());
+        if (deviceId === null) localStorage.setItem('deviceId', uuidv4());
       } else {
-        if (localStorage.getItem('userId') === null)
+        if (userId === null)
           localStorage.setItem('userId', encrypt(res.data.id.toString(), res.data.deviceId));
-        if (localStorage.getItem('deviceId') === null)
-          localStorage.setItem('deviceId', res.data.deviceId);
+        if (deviceId === null) localStorage.setItem('deviceId', res.data.deviceId);
       }
       setReady(true);
     });
