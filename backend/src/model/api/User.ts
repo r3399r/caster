@@ -7,7 +7,7 @@ export type GetUserResponse = User | null;
 export type GetUserDetailParams = PaginationParams & { categoryId: number };
 
 export type GetUserDetailResponse = {
-  userId: number;
+  user: User | null;
   categoryId: number;
   count: number | null;
   scoringRate: number | null;

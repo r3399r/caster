@@ -3,12 +3,16 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { User, UserEntity } from './UserEntity';
 
 export type UserStats = {
   id: number;
   userId: number;
+  user: User;
   categoryId: number;
   count: number;
   scoringRate: number | null;
@@ -23,6 +27,10 @@ export class UserStatsEntity implements UserStats {
 
   @Column({ type: 'int', unsigned: true, name: 'user_id' })
   userId!: number;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'user_id' })
+  user!: User;
 
   @Column({ type: 'int', unsigned: true, name: 'category_id' })
   categoryId!: number;

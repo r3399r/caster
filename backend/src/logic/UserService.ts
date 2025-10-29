@@ -58,6 +58,7 @@ export class UserService {
         userId: isNaN(Number(this.userId)) ? 0 : Number(this.userId),
         categoryId: params.categoryId,
       },
+      relations: { user: true },
     });
 
     const limit = params?.limit ? Number(params.limit) : LIMIT;
@@ -78,7 +79,7 @@ export class UserService {
     });
 
     return {
-      userId: isNaN(Number(this.userId)) ? 0 : Number(this.userId),
+      user: userStats?.user ?? null,
       categoryId: params.categoryId,
       count: userStats?.count ?? null,
       scoringRate: userStats?.scoringRate ?? null,
