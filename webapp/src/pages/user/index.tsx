@@ -16,6 +16,7 @@ import { format } from 'date-fns';
 import { bn } from 'src/util/bignumber';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { setCategoryId as reduxSetCategoryId } from 'src/redux/uiSlice';
+import randomcolor from 'randomcolor';
 
 const LIMIT = 100;
 
@@ -90,7 +91,15 @@ const User = () => {
                   <TableCell>
                     <div className="flex gap-1">
                       {row.tag.map((t) => (
-                        <div className="rounded border px-1">{t.name}</div>
+                        <div
+                          key={t.id}
+                          className="rounded px-1"
+                          style={{
+                            background: randomcolor({ luminosity: 'light', seed: t.id }),
+                          }}
+                        >
+                          {t.name}
+                        </div>
                       ))}
                     </div>
                   </TableCell>

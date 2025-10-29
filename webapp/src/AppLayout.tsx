@@ -3,17 +3,22 @@ import { Outlet } from 'react-router-dom';
 import Bar from './components/Bar';
 import { useEffect, useState } from 'react';
 import userEndpoint from './api/userEndpoint';
-import { encrypt } from './util/crypto';
+import { decrypt, encrypt } from './util/crypto';
 
 const AppLayout = () => {
   const [ready, setReady] = useState<boolean>(false);
 
   useEffect(() => {
     const deviceId = localStorage.getItem('deviceId');
-    const userId = localStorage.getItem('userId');
+    let userId = localStorage.getItem('userId');
     if (deviceId !== null && userId !== null) {
-      setReady(true);
-      return;
+      if (Number(decrypt(userId, deviceId)) === 0) {
+        localStorage.removeItem('userId');
+        userId = null;
+      } else {
+        setReady(true);
+        return;
+      }
     }
     userEndpoint.getUser().then((res) => {
       if (!res) return;
