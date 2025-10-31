@@ -26,4 +26,12 @@ export class UserAccess {
       ...options,
     });
   }
+
+  public async delete(data: User) {
+    const qr = await this.database.getQueryRunner();
+    const entity = new UserEntity();
+    Object.assign(entity, data);
+
+    return await qr.manager.remove(data);
+  }
 }

@@ -19,6 +19,14 @@ export class ReplyAccess {
     return await qr.manager.save(entity);
   }
 
+  public async saveMany(data: Reply[]) {
+    const qr = await this.database.getQueryRunner();
+    const entity = new ReplyEntity();
+    Object.assign(entity, data);
+
+    return await qr.manager.save(entity);
+  }
+
   public async findAndCount(options?: FindManyOptions<Reply>) {
     const qr = await this.database.getQueryRunner();
 

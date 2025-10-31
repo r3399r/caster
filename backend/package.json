@@ -23,7 +23,8 @@
     "mysql2": "^3.15.1",
     "reflect-metadata": "^0.2.2",
     "tslib": "^2.8.1",
-    "typeorm": "^0.3.27"
+    "typeorm": "^0.3.27",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/compat": "^1.4.0",
