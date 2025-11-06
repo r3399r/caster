@@ -63,7 +63,10 @@ const User = () => {
     <div>
       <div className="mb-2 text-2xl font-bold">答題記錄</div>
       <div>總答題數: {result?.count ?? '-'}</div>
-      <div>平均得分: {result?.scoringRate ? bn(result.scoringRate).dp(2).toFormat() : '-'}</div>
+      <div>
+        平均得分:{' '}
+        {result && result.scoringRate !== null ? bn(result.scoringRate).dp(2).toFormat() : '-'}
+      </div>
       <div className="mt-2">
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">

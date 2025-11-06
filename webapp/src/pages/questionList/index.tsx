@@ -245,7 +245,9 @@ const QuestionList = () => {
                   </div>
                 </TableCell>
                 <TableCell>
-                  {row.scoringRate ? bn(row.scoringRate).times(100).dp(2).toFormat() + '%' : '-'}
+                  {row.scoringRate !== null
+                    ? bn(row.scoringRate).times(100).dp(2).toFormat() + '%'
+                    : '-'}
                 </TableCell>
                 <TableCell>
                   {row.avgElapsedTimeMs ? msToMinSec(row.avgElapsedTimeMs) : '-'}
