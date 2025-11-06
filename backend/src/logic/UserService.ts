@@ -70,7 +70,7 @@ export class UserService {
 
   public async getUser(): Promise<GetUserResponse> {
     const decoded = await this.verifyFirebaseToken();
-    if (!decoded) throw new UnauthorizedError('Unauthorized');
+    if (!decoded) return null;
 
     return await this.userAccess.findOne({
       where: { firebaseUid: decoded.uid },
