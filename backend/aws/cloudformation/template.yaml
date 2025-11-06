@@ -573,6 +573,7 @@ Resources:
             Fn::ImportValue: !Sub celestial-studio-${TargetEnvr}-db-endpoint
           DB_PWD: !Sub '{{resolve:ssm:mysql-${TargetEnvr}-${Project}-pwd}}'
           INTERVAL_EXPRESSION: '65 minute'
+          FIREBAE_ADMIN_KEY: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-firebase-admin-key}}'
   InvokePermissionStatsLoader:
     Type: AWS::Lambda::Permission
     DependsOn: [LambdaStatsLoader]
