@@ -20,18 +20,28 @@ export type PostQuestionRequest = {
   }[];
 };
 
-export type PostQuestionReplyRequest = {
+export type PostQuestionStartRequest = {
   id: number;
+};
+
+export type PostQuestionStartResponse = Pick<
+  Reply,
+  'id' | 'questionId' | 'userId'
+>;
+
+export type PostQuestionCompleteRequest = {
+  id: number;
+  replyId: number;
   elapsedTimeMs: number;
   replied: { id: number; answer: string }[];
 };
 
 export type ModifiedReply = Reply & {
-  actualAnswer: string;
+  actualAnswer: string | null;
   fbPostId: string | null;
 };
 
-export type PostQuestionReplyResponse = ModifiedReply;
+export type PostQuestionCompleteResponse = ModifiedReply;
 
 export type GetQuestionParams = PaginationParams & {
   categoryId: number;

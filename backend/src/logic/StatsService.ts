@@ -20,11 +20,16 @@ export class StatsService {
   public async processStats() {
     const intervalExpression = process.env.INTERVAL_EXPRESSION ?? '1 day';
     const replies = await this.replyAccess.find({
-      where: {
-        createdAt: Raw(
-          (alias) => `${alias} > NOW() - INTERVAL ${intervalExpression}`
-        ),
-      },
+      where: [
+        {
+          createdAt: Raw(
+            (alias) => `${alias} > NOW() - INTERVAL ${intervalExpression}`
+          ),
+          updatedAt: Raw(
+            (alias) => `${alias} > NOW() - INTERVAL ${intervalExpression}`
+          ),
+        },
+      ],
     });
     console.log(`Processing ${replies.length} new replies for stats.`);
     if (replies.length === 0) return;

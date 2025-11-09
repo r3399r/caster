@@ -262,7 +262,7 @@ const QuestionList = () => {
                 <TableCell>
                   {row.avgElapsedTimeMs ? msToMinSec(row.avgElapsedTimeMs) : '-'}
                 </TableCell>
-                <TableCell>{row.lastReply ? '已作答' : '尚未作答'}</TableCell>
+                <TableCell>{row.lastReply?.complete === true ? '已作答' : '尚未作答'}</TableCell>
                 <TableCell>{row.source ?? '-'}</TableCell>
               </TableRow>
             ))}

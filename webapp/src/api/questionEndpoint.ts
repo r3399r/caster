@@ -3,10 +3,12 @@ import type {
   GetQuestionParams,
   GetQuestionResponse,
   GetQuestionIdResponse,
-  PostQuestionReplyRequest,
-  PostQuestionReplyResponse,
   GetQuestionTagParams,
   GetQuestionTagResponse,
+  PostQuestionCompleteRequest,
+  PostQuestionCompleteResponse,
+  PostQuestionStartRequest,
+  PostQuestionStartResponse,
 } from 'src/model/backend/api/Question';
 
 const getQuestion = async (params?: GetQuestionParams) => {
@@ -35,11 +37,24 @@ const getQuestionTag = async (params: GetQuestionTagParams) => {
   }
 };
 
-const postQuestionReply = async (data: PostQuestionReplyRequest) => {
+const postQuestionStart = async (data: PostQuestionStartRequest) => {
   try {
-    return await http.post<PostQuestionReplyResponse, PostQuestionReplyRequest>(`question/reply`, {
+    return await http.post<PostQuestionStartResponse, PostQuestionStartRequest>(`question/start`, {
       data,
     });
+  } catch {
+    alert('發生無預期錯誤，請重新再試，若反覆出現此問題，請聯絡客服人員。');
+  }
+};
+
+const postQuestionComplete = async (data: PostQuestionCompleteRequest) => {
+  try {
+    return await http.post<PostQuestionCompleteResponse, PostQuestionCompleteRequest>(
+      `question/complete`,
+      {
+        data,
+      },
+    );
   } catch {
     alert('發生無預期錯誤，請重新再試，若反覆出現此問題，請聯絡客服人員。');
   }
@@ -49,5 +64,6 @@ export default {
   getQuestion,
   getQuestionTag,
   getQuestionId,
-  postQuestionReply,
+  postQuestionStart,
+  postQuestionComplete,
 };

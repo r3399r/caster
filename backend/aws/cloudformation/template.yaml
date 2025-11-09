@@ -403,7 +403,7 @@ Resources:
                 }
               }
             },
-            "/api/question/reply": {
+            "/api/question/start": {
               "post": {
                 "parameters": [{
                   "name": "Authorization",
@@ -415,7 +415,60 @@ Resources:
                   "content": {
                     "application/json": {
                       "schema": {
-                        "$ref": "#/components/schemas/postQuestionReply"
+                        "$ref": "#/components/schemas/postQuestionStart"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "x-amazon-apigateway-request-validator": "Validate body, query string parameters, and headers",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-api/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
+            },
+            "/api/question/complete": {
+              "post": {
+                "parameters": [{
+                  "name": "Authorization",
+                  "in": "header",
+                  "required": true,
+                  "schema": {"type": "string"}
+                }],
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/postQuestionComplete"
                       }
                     }
                   },
@@ -532,13 +585,19 @@ Resources:
                 }
               },
               "required": ["category","title","content","imageUrl","source","tag"]
+            },            
+            "postQuestionStart": {
+              "type": "object",
+              "properties": {
+                "id":{"type": "number"}
+              },
+              "required": ["id"]
             },
-            "postQuestionReply": {
+            "postQuestionComplete": {
               "type": "object",
               "properties": {
                 "id":{"type": "number"},
-                "userId":{"type": "number"},
-                "deviceId":{"type": "string"},
+                "replyId":{"type": "number"},
                 "elapsedTimeMs":{"type": "number", "minimum": 0},
                 "replied": {
                   "type": "array",
@@ -552,7 +611,7 @@ Resources:
                   }
                 }
               },
-              "required": ["id","elapsedTimeMs","replied"]
+              "required": ["id","replyId","elapsedTimeMs","replied"]
             }
           },
           "x-amazon-apigateway-request-validators" : {

@@ -3,8 +3,9 @@ import { QuestionService } from 'src/logic/QuestionService';
 import {
   GetQuestionParams,
   GetQuestionTagParams,
-  PostQuestionReplyRequest,
+  PostQuestionCompleteRequest,
   PostQuestionRequest,
+  PostQuestionStartRequest,
 } from 'src/model/api/Question';
 import { BadRequestError } from 'src/model/error';
 import { LambdaEvent } from 'src/model/Lambda';
@@ -21,8 +22,10 @@ export default async (lambdaEvent: LambdaEvent) => {
       return await questionDefault();
     case '/api/question/{uid}':
       return await questionUid();
-    case '/api/question/reply':
-      return await questionReply();
+    case '/api/question/start':
+      return await questionStart();
+    case '/api/question/complete':
+      return await questionComplete();
     case '/api/question/tag':
       return await questionTag();
   }
@@ -59,14 +62,28 @@ const questionUid = async () => {
   throw new Error('unexpected httpMethod');
 };
 
-const questionReply = async () => {
+const questionStart = async () => {
   switch (event.httpMethod) {
     case 'POST':
       if (event.body === null)
         throw new BadRequestError('body should not be empty');
 
-      return await service.replyQuestion(
-        JSON.parse(event.body) as PostQuestionReplyRequest
+      return await service.startQuestion(
+        JSON.parse(event.body) as PostQuestionStartRequest
+      );
+  }
+
+  throw new Error('unexpected httpMethod');
+};
+
+const questionComplete = async () => {
+  switch (event.httpMethod) {
+    case 'POST':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      return await service.completeQuestion(
+        JSON.parse(event.body) as PostQuestionCompleteRequest
       );
   }
 

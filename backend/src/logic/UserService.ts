@@ -130,6 +130,7 @@ export class UserService {
           score: v.score,
           elapsedTimeMs: v.elapsedTimeMs,
           repliedAnswer: v.repliedAnswer,
+          complete: v.complete,
           createdAt: v.createdAt,
         })),
         paginate: genPagination(total, limit, offset),

@@ -15,8 +15,9 @@ export type Reply = {
   question: Question;
   userId: number;
   score: number;
-  elapsedTimeMs: number;
-  repliedAnswer: string;
+  elapsedTimeMs: number | null;
+  repliedAnswer: string | null;
+  complete: boolean;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -39,14 +40,17 @@ export class ReplyEntity implements Reply {
   @Column({ type: 'double' })
   score!: number;
 
-  @Column({ type: 'int', name: 'elapsed_time_ms' })
-  elapsedTimeMs!: number;
+  @Column({ type: 'int', name: 'elapsed_time_ms', default: null })
+  elapsedTimeMs: number | null = null;
 
-  @Column({ type: 'text', name: 'replied_answer' })
-  repliedAnswer!: string;
+  @Column({ type: 'text', name: 'replied_answer', default: null })
+  repliedAnswer: string | null = null;
+
+  @Column({ type: 'boolean' })
+  complete: boolean = false;
 
   @Column({ type: 'datetime', name: 'created_at', default: null })
-  createdAt!: string;
+  createdAt: string | null = null;
 
   @Column({ type: 'datetime', name: 'updated_at', default: null })
   updatedAt: string | null = null;

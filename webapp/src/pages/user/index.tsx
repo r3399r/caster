@@ -114,7 +114,7 @@ const User = () => {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell>答題時間</TableCell>
+                  <TableCell>時間</TableCell>
                   <TableCell>題目ID</TableCell>
                   <TableCell>標題</TableCell>
                   <TableCell>Tag</TableCell>
@@ -154,7 +154,11 @@ const User = () => {
                       </div>
                     </TableCell>
                     <TableCell>{row.score}</TableCell>
-                    <TableCell>{bn(row.elapsedTimeMs).div(1000).dp(1).toFormat()}</TableCell>
+                    <TableCell>
+                      {row.complete === false
+                        ? '尚未完成作答'
+                        : bn(row.elapsedTimeMs).div(1000).dp(1).toFormat()}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

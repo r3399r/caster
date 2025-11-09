@@ -23,7 +23,8 @@ const Question = () => {
   const [running, setRunning] = useState<boolean>(false);
   const [startTimestamp, setStartTimestamp] = useState<number>();
   const [showNotification, setShowNotification] = useState<boolean>(true);
-  const [replyResult, setReplyResult] = useState<ModifiedReply>();
+  const [replyId, setReplyId] = useState<number | null>(null);
+  const [replyResult, setReplyResult] = useState<ModifiedReply | null>(null);
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
 
   useEffect(() => {
@@ -40,8 +41,12 @@ const Question = () => {
       dispatch(setCategoryId(categoryId));
 
       if (res.data.lastReply === null) setShowNotification(true);
-      else {
+      else if (res.data.lastReply.complete === false) {
+        setShowNotification(true);
+        setReplyId(res.data.lastReply.id);
+      } else {
         setShowNotification(false);
+        setReplyId(res.data.lastReply.id);
         setReplyResult(res.data.lastReply);
         setSeconds(bn(res.data.lastReply.elapsedTimeMs).div(1000).dp(0).toNumber());
       }
@@ -59,6 +64,16 @@ const Question = () => {
       if (interval) clearInterval(interval);
     };
   }, [running]);
+
+  const onClickStart = () => {
+    setShowNotification(false);
+    setRunning((r) => !r);
+    setStartTimestamp(Date.now());
+    if (!!id && replyId === null)
+      questionEndpoint.postQuestionStart({ id: parseInt(id.substring(3), 36) }).then((res) => {
+        setReplyId(res?.data.id ?? null);
+      });
+  };
 
   const onClickSingle = (id: number) => (e: ChangeEvent<HTMLInputElement>) => {
     const thisAnswer = repliedAnswer?.map((r) =>
@@ -79,18 +94,19 @@ const Question = () => {
   };
 
   const onSubmit = () => {
-    if (!id || !repliedAnswer || !startTimestamp) return;
+    if (!id || !repliedAnswer || !startTimestamp || !replyId) return;
 
     dispatch(startWaiting());
     questionEndpoint
-      .postQuestionReply({
+      .postQuestionComplete({
         id: parseInt(id.substring(3), 36),
+        replyId,
         elapsedTimeMs: Date.now() - startTimestamp,
         replied: repliedAnswer,
       })
       .then((res) => {
         setOpen(false);
-        setReplyResult(res?.data);
+        setReplyResult(res?.data ?? null);
         setRunning(false);
       })
       .finally(() => {
@@ -153,15 +169,7 @@ const Question = () => {
             提醒您，在按下「開始」之後便會開始計時，請確保您有充足且完整的時間作答，以獲得客觀的統計結果。
           </p>
           <div className="text-center">
-            <Button
-              variant="contained"
-              color="success"
-              onClick={() => {
-                setShowNotification(false);
-                setRunning((r) => !r);
-                setStartTimestamp(Date.now());
-              }}
-            >
+            <Button variant="contained" color="success" onClick={onClickStart}>
               開始
             </Button>
           </div>

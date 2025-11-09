@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { FindManyOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { Reply, ReplyEntity } from 'src/model/entity/ReplyEntity';
 import { Database } from 'src/utils/Database';
 
@@ -39,6 +39,14 @@ export class ReplyAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.find<Reply>(ReplyEntity.name, {
+      ...options,
+    });
+  }
+
+  public async findOne(options?: FindOneOptions<Reply>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOne<Reply>(ReplyEntity.name, {
       ...options,
     });
   }

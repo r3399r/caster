@@ -12,9 +12,11 @@ import {
   GetQuestionResponse,
   GetQuestionTagParams,
   GetQuestionTagResponse,
-  PostQuestionReplyRequest,
-  PostQuestionReplyResponse,
+  PostQuestionCompleteRequest,
+  PostQuestionCompleteResponse,
   PostQuestionRequest,
+  PostQuestionStartRequest,
+  PostQuestionStartResponse,
 } from 'src/model/api/Question';
 import { QuestionEntity } from 'src/model/entity/QuestionEntity';
 import { QuestionMinorEntity } from 'src/model/entity/QuestionMinorEntity';
@@ -58,6 +60,11 @@ export class QuestionService {
     });
     if (question.rid !== rid) throw new BadRequestError('rid is not matched');
 
+    const lastReply =
+      question.reply.length > 0
+        ? question.reply.sort(compare('createdAt', 'desc'))[0]
+        : null;
+
     return {
       uid: question.rid + question.id.toString(36),
       title: question.title,
@@ -73,14 +80,16 @@ export class QuestionService {
       count: question.count,
       scoringRate: question.scoringRate,
       avgElapsedTimeMs: question.avgElapsedTimeMs,
-      lastReply:
-        question.reply.length > 0
-          ? {
-              ...question.reply.sort(compare('createdAt', 'desc'))[0],
-              actualAnswer: question.minor.map((m) => m.answer).join('|'),
-              fbPostId: question.fbPostId,
-            }
-          : null,
+      lastReply: lastReply
+        ? {
+            ...lastReply,
+            actualAnswer:
+              lastReply.complete === true
+                ? question.minor.map((m) => m.answer).join('|')
+                : null,
+            fbPostId: lastReply.complete === true ? question.fbPostId : null,
+          }
+        : null,
     };
   }
 
@@ -252,11 +261,42 @@ export class QuestionService {
           .toNumber();
   }
 
-  public async replyQuestion(
-    data: PostQuestionReplyRequest
-  ): Promise<PostQuestionReplyResponse> {
+  public async startQuestion(
+    data: PostQuestionStartRequest
+  ): Promise<PostQuestionStartResponse> {
     const user = await this.userService.getUser();
     if (user === null) throw new NotFoundError('User not found');
+
+    const replyEntity = new ReplyEntity();
+    replyEntity.userId = user.id;
+    replyEntity.questionId = data.id;
+    replyEntity.score = 0;
+    replyEntity.complete = false;
+
+    const newReply = await this.replyAccess.save(replyEntity);
+
+    return {
+      id: newReply.id,
+      questionId: newReply.questionId,
+      userId: newReply.userId,
+    };
+  }
+
+  public async completeQuestion(
+    data: PostQuestionCompleteRequest
+  ): Promise<PostQuestionCompleteResponse> {
+    const user = await this.userService.getUser();
+    if (user === null) throw new NotFoundError('User not found');
+
+    const reply = await this.replyAccess.findOne({
+      where: {
+        id: data.replyId,
+        userId: user.id,
+        questionId: data.id,
+        complete: false,
+      },
+    });
+    if (reply === null) throw new NotFoundError('Reply not found');
 
     const question = await this.questionAccess.findOneOrFail({
       where: { id: data.id },
@@ -281,14 +321,12 @@ export class QuestionService {
       .reduce((prev, cur) => prev.plus(cur), bn(0));
     const score = totalScore.div(question.minor.length).dp(4, 7).toNumber();
 
-    const replyEntity = new ReplyEntity();
-    replyEntity.questionId = data.id;
-    replyEntity.userId = user.id;
-    replyEntity.score = score;
-    replyEntity.elapsedTimeMs = data.elapsedTimeMs;
-    replyEntity.repliedAnswer = data.replied.map((r) => r.answer).join('|');
+    reply.score = score;
+    reply.elapsedTimeMs = data.elapsedTimeMs;
+    reply.repliedAnswer = data.replied.map((r) => r.answer).join('|');
+    reply.complete = true;
 
-    const newReply = await this.replyAccess.save(replyEntity);
+    const newReply = await this.replyAccess.save(reply);
 
     return {
       ...newReply,
