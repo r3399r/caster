@@ -31,7 +31,7 @@ export const uiSlice = createSlice({
     setIsLogin: (state: UiState, action: PayloadAction<boolean>) => {
       state.isLogin = action.payload;
     },
-    setUser: (state: UiState, action: PayloadAction<User>) => {
+    setUser: (state: UiState, action: PayloadAction<User | null>) => {
       state.user = action.payload;
     },
   },

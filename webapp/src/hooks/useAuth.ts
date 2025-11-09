@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
-import userEndpoint from 'src/api/userEndpoint';
+import { auth, provider } from 'src/firebase/config';
+import { signInWithPopup, signOut } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import { setIsLogin, setUser } from 'src/redux/uiSlice';
+import userEndpoint from 'src/api/userEndpoint';
 
 export const useAuth = () => {
   const dispatch = useDispatch();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const auth = getAuth();
-  const provider = new GoogleAuthProvider();
 
   useEffect(() => {
     const unsubscribe = auth.onIdTokenChanged(async (user) => {
@@ -24,6 +23,7 @@ export const useAuth = () => {
       } else {
         setIsAuthenticated(false);
         dispatch(setIsLogin(false));
+        dispatch(setUser(null));
         sessionStorage.removeItem('idToken');
       }
     });
