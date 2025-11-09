@@ -4,6 +4,7 @@ import { signInWithPopup, signOut } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import { setIsLogin, setUser } from 'src/redux/uiSlice';
 import userEndpoint from 'src/api/userEndpoint';
+import { isInAppBrowser } from 'src/util/isInAppBrowser';
 
 export const useAuth = () => {
   const dispatch = useDispatch();
@@ -33,7 +34,8 @@ export const useAuth = () => {
 
   const login = async () => {
     try {
-      await signInWithPopup(auth, provider);
+      if (isInAppBrowser()) alert('請改用系統瀏覽器登入，如 Chrome 或 Safari');
+      else await signInWithPopup(auth, provider);
     } catch (error) {
       console.error('Login failed:', error);
     }

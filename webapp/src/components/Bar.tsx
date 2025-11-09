@@ -45,7 +45,7 @@ const Bar = () => {
             onClick={login}
             className="flex items-center gap-2 rounded-lg border bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
           >
-            Google登入
+            Google 登入
           </Button>
         ) : (
           <Button
