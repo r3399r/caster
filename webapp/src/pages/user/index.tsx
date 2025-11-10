@@ -126,7 +126,7 @@ const User = () => {
                 {result?.reply.data.map((row) => (
                   <TableRow key={row.id}>
                     <TableCell component="th" scope="row">
-                      {format(new Date(row.createdAt ?? ''), 'yyyy/MM/dd HH:mm:ss')}
+                      {format(new Date(row.recordedAt ?? ''), 'yyyy/MM/dd HH:mm:ss')}
                     </TableCell>
                     <TableCell>
                       <a

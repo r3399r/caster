@@ -22,7 +22,7 @@ export type GetUserDetailResponse = {
     elapsedTimeMs: number | null;
     repliedAnswer: string | null;
     complete: boolean;
-    createdAt: string | null;
+    recordedAt: string | null;
   }>;
 };
 

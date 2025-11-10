@@ -18,6 +18,7 @@ export type Reply = {
   elapsedTimeMs: number | null;
   repliedAnswer: string | null;
   complete: boolean;
+  recordedAt: string | null;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -48,6 +49,9 @@ export class ReplyEntity implements Reply {
 
   @Column({ type: 'boolean' })
   complete: boolean = false;
+
+  @Column({ type: 'datetime', name: 'recorded_at', default: null })
+  recordedAt: string | null = null;
 
   @Column({ type: 'datetime', name: 'created_at', default: null })
   createdAt: string | null = null;

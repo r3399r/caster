@@ -272,6 +272,7 @@ export class QuestionService {
     replyEntity.questionId = data.id;
     replyEntity.score = 0;
     replyEntity.complete = false;
+    replyEntity.recordedAt = new Date().toISOString();
 
     const newReply = await this.replyAccess.save(replyEntity);
 
@@ -325,6 +326,7 @@ export class QuestionService {
     reply.elapsedTimeMs = data.elapsedTimeMs;
     reply.repliedAnswer = data.replied.map((r) => r.answer).join('|');
     reply.complete = true;
+    reply.recordedAt = new Date().toISOString();
 
     const newReply = await this.replyAccess.save(reply);
 

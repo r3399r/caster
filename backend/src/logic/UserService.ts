@@ -110,7 +110,7 @@ export class UserService {
       relations: {
         question: { tag: true },
       },
-      order: { createdAt: 'DESC' },
+      order: { recordedAt: 'DESC' },
       take: limit,
       skip: offset,
     });
@@ -131,7 +131,7 @@ export class UserService {
           elapsedTimeMs: v.elapsedTimeMs,
           repliedAnswer: v.repliedAnswer,
           complete: v.complete,
-          createdAt: v.createdAt,
+          recordedAt: v.recordedAt,
         })),
         paginate: genPagination(total, limit, offset),
       },
