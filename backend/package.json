@@ -1,6 +1,6 @@
 {
   "name": "caster-backend",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "scripts": {
     "lint:es": "eslint src",
     "fix:es": "npm run lint:es -- --fix",
