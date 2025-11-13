@@ -1,5 +1,5 @@
 {
-  "name": "caster-backend",
+  "name": "castor-backend",
   "version": "1.0.1",
   "scripts": {
     "lint:es": "eslint src",
