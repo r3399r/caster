@@ -41,7 +41,7 @@ const Question = () => {
         setQuestion(res.data);
         setRepliedAnswer(res.data.minor.map((v) => ({ id: v.id, answer: '' })));
 
-        const categoryId = res.data.categoryId;
+        const categoryId = res.data.category.id;
         dispatch(setCategoryId(categoryId));
 
         if (res.data.lastReply === null) setShowNotification(true);
@@ -151,6 +151,17 @@ const Question = () => {
     return (
       <div>
         <div className="border p-4">
+          <p>
+            類別:{' '}
+            <span
+              className="rounded px-1"
+              style={{
+                background: randomcolor({ luminosity: 'light', seed: question.category.id }),
+              }}
+            >
+              {question.category.name}
+            </span>
+          </p>
           <p>
             題目ID: <span className="font-bold text-blue-600">{question.uid}</span>
           </p>
@@ -271,7 +282,7 @@ const Question = () => {
           <div className="mt-4">
             <Button
               variant="outlined"
-              onClick={() => navigate(`/list?categoryId=${question.categoryId}`)}
+              onClick={() => navigate(`/list?categoryId=${question.category.id}`)}
             >
               回到題目清單
             </Button>

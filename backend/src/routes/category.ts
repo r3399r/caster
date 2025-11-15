@@ -26,4 +26,3 @@ const categoryDefault = async () => {
 
   throw new Error('unexpected httpMethod');
 };
-

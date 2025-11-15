@@ -74,7 +74,7 @@ export type GetQuestionResponse = Paginate<ModifiedQuestion>;
 export type GetQuestionIdResponse = {
   uid: string;
   title: string;
-  categoryId: number;
+  category: Category;
   content: string;
   source: string | null;
   minor: Omit<QuestionMinor, 'answer'>[];
