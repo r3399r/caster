@@ -68,7 +68,7 @@ export class QuestionService {
     return {
       uid: question.rid + question.id.toString(36).toUpperCase(),
       title: question.title,
-      categoryId: question.categoryId,
+      category: question.category,
       content: question.content,
       source: question.source,
       minor: question.minor.map((m) => {

@@ -64,6 +64,7 @@ export class QuestionAccess {
         userId: data.userId,
       })
       .leftJoinAndSelect('question.tag', 'tag')
+      .leftJoinAndSelect('question.category', 'category')
       .where('question.id = :id', { id: data.id })
       .getOneOrFail()) as Question;
   }

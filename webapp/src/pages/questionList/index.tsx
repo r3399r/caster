@@ -41,7 +41,7 @@ const QuestionList = () => {
   const [categoryId, setCategoryId] = useState<number>();
   const [titleQuery, setTitleQuery] = useState<string>();
   const [sorting, setSorting] = useState<string>();
-  const [sortDirection, setSortDirection] = useState<'ASC' | 'DESC'>('ASC');
+  const [sortDirection, setSortDirection] = useState<'ASC' | 'DESC'>('DESC');
   const [sortValue, setSortValue] = useState<number>(1);
   const [showReply, setShowReply] = useState<'true' | 'false'>();
   const [showReplyValue, setShowReplyValue] = useState<number>(1);
@@ -126,6 +126,7 @@ const QuestionList = () => {
     if (titleQuery) sp.set('title', titleQuery);
     if (sorting) sp.set('sorting', sorting);
     if (sortDirection === 'DESC') sp.set('sortDirection', 'DESC');
+    else sp.set('sortDirection', 'ASC');
     if (showReply) sp.set('showReply', showReply);
     if (tagsFilter && tagsFilter.length > 0) sp.set('tagsFilter', tagsFilter.join());
     setSearchParams(sp, { replace: !!opts?.replace });
@@ -167,7 +168,7 @@ const QuestionList = () => {
                 setSortValue(value);
                 if (value === 1) {
                   setSorting(undefined);
-                  setSortDirection('ASC');
+                  setSortDirection('DESC');
                 } else if (value === 2 || value === 3) {
                   setSorting('scoringRate');
                   setSortDirection(value === 2 ? 'ASC' : 'DESC');
