@@ -129,11 +129,11 @@ const Question = () => {
   };
 
   const msToMinSec = (ms: number): string => {
-    if (Number.isNaN(ms)) return '00分00秒';
     const totalSeconds = Math.floor(ms / 1000);
     const m = Math.floor(totalSeconds / 60);
     const s = totalSeconds % 60;
-    return `${m}分${String(s).padStart(2, '0')}秒`;
+    if (m === 0) return `${s} 秒`;
+    return `${m} 分 ${String(s).padStart(2, '0')} 秒`;
   };
 
   if (!isLogin) return <div>請登入以繼續</div>;
