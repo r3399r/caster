@@ -163,13 +163,10 @@ const Question = () => {
             </span>
           </p>
           <p>
-            題目ID: <span className="font-bold text-blue-600">{question.uid}</span>
+            題目名稱: <span className="font-bold">{question.title}</span>
           </p>
           <p>
-            標題: <span className="font-bold">{question.title}</span>
-          </p>
-          <p>
-            Tag:{' '}
+            標籤:{' '}
             {question.tag.map((t) => (
               <span
                 key={t.id}
@@ -260,11 +257,39 @@ const Question = () => {
         <>
           <div className="mt-4 border p-4">
             <div>
-              <div>你的分數: {replyResult.score} (滿分1)</div>
-              <div>你的答案: {replyResult.repliedAnswer}</div>
-              <div>正確答案: {replyResult.actualAnswer}</div>
+              <p>
+                類別:{' '}
+                <span
+                  className="rounded px-1"
+                  style={{
+                    background: randomcolor({ luminosity: 'light', seed: question.category.id }),
+                  }}
+                >
+                  {question.category.name}
+                </span>
+              </p>
+              <p>
+                題目名稱: <span className="font-bold">{question.title}</span>
+              </p>
+              <p>
+                標籤:{' '}
+                {question.tag.map((t) => (
+                  <span
+                    key={t.id}
+                    className="mr-1 rounded px-1"
+                    style={{
+                      background: randomcolor({ luminosity: 'light', seed: t.id }),
+                    }}
+                  >
+                    {t.name}
+                  </span>
+                ))}
+              </p>
+              <p className="mt-2">你的分數: {replyResult.score} (滿分1)</p>
+              <p>你的答案: {replyResult.repliedAnswer}</p>
+              <p>正確答案: {replyResult.actualAnswer}</p>
               {replyResult.fbPostId && (
-                <div className="mt-2">
+                <p className="mt-2">
                   如果你有什麼想提問的，歡迎到{' '}
                   <a
                     className="text-blue-600 underline"
@@ -275,7 +300,7 @@ const Question = () => {
                     討論區
                   </a>{' '}
                   跟大家一起討論題目唷!
-                </div>
+                </p>
               )}
             </div>
           </div>
