@@ -23,7 +23,7 @@ const Question = () => {
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
 
   useEffect(() => {
-    if (!id || !isLogin) return;
+    if (!id) return;
 
     dispatch(startWaiting());
     questionEndpoint
@@ -38,6 +38,10 @@ const Question = () => {
         const categoryId = res.data.category.id;
         dispatch(setCategoryId(categoryId));
 
+        if (isLogin && res.data.lastReply === null)
+          questionEndpoint.postQuestionStart({ id: parseInt(id.substring(3), 36) }).then((res) => {
+            setReplyId(res?.data.id ?? null);
+          });
         if (res.data.lastReply !== null) {
           if (res.data.lastReply.complete === false) {
             setReplyId(res.data.lastReply.id);
@@ -45,10 +49,6 @@ const Question = () => {
             setReplyId(res.data.lastReply.id);
             setReplyResult(res.data.lastReply);
           }
-        } else {
-          questionEndpoint.postQuestionStart({ id: parseInt(id.substring(3), 36) }).then((res) => {
-            setReplyId(res?.data.id ?? null);
-          });
         }
       })
       .finally(() => {
@@ -102,8 +102,6 @@ const Question = () => {
         dispatch(finishWaiting());
       });
   };
-
-  if (!isLogin) return <div>請登入以繼續</div>;
 
   if (!question) return <div />;
 
@@ -222,9 +220,12 @@ const Question = () => {
       </MathJax>
       {!replyResult && (
         <div className="mt-4">
-          <Button variant="contained" onClick={() => setOpen(true)}>
+          <Button variant="contained" onClick={() => setOpen(true)} disabled={!isLogin}>
             送出
           </Button>
+          {!isLogin && (
+            <p className="text-rose-500">溫馨提醒：登入後，即可進行答題，並能使用完整功能</p>
+          )}
         </div>
       )}
       {replyResult && (

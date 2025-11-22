@@ -52,11 +52,10 @@ export class QuestionService {
     const rid = uid.substring(0, 3).toUpperCase();
 
     const user = await this.userService.getUser();
-    if (user === null) throw new UnauthorizedError('User not found');
 
     const question = await this.questionAccess.findDetail({
       id,
-      userId: user.id,
+      userId: user?.id ?? -1,
     });
     if (question.rid !== rid) throw new BadRequestError('rid is not matched');
 

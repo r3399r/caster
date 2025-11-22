@@ -11,10 +11,7 @@ import {
   PostUserSyncResponse,
 } from 'src/model/api/User';
 import { UserEntity } from 'src/model/entity/UserEntity';
-import {
-  BadRequestError,
-  UnauthorizedError,
-} from 'src/model/error';
+import { BadRequestError, UnauthorizedError } from 'src/model/error';
 import { authorizationSymbol } from 'src/utils/LambdaHelper';
 import { genPagination } from 'src/utils/paginator';
 
