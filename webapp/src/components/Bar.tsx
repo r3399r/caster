@@ -23,7 +23,9 @@ const Bar = () => {
             : '#00000000',
         }}
       >
-        <div className="font-bold text-blue-900">Practice Makes Perfect</div>
+        <div className="cursor-pointer font-bold text-blue-900" onClick={() => navigate('/')}>
+          Practice Makes Perfect
+        </div>
         <Button variant="contained" onClick={() => navigate(`/category`)}>
           類別清單
         </Button>
@@ -65,7 +67,9 @@ const Bar = () => {
           : '#00000000',
       }}
     >
-      <div className="font-bold text-blue-900">Practice Makes Perfect</div>
+      <div className="cursor-pointer font-bold text-blue-900" onClick={() => navigate('/')}>
+        Practice Makes Perfect
+      </div>
       <div className="ml-auto">
         <Button variant="contained" onClick={() => setOpen(true)}>
           Menu

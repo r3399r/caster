@@ -240,7 +240,7 @@ const Question = () => {
                   如果你有任何問題，歡迎到{' '}
                   <a
                     className="text-blue-600 underline"
-                    href={`https://m.facebook.com/story.php?story_fbid=${replyResult.fbPostId.split('_')[1]}&id=${replyResult.fbPostId.split('_')[0]}`}
+                    href={`https://m.facebook.com/${replyResult.fbPostId.split('_')[0]}/posts/${replyResult.fbPostId.split('_')[1]}`}
                     target="_blank"
                     rel="noreferrer"
                   >
