@@ -8,6 +8,7 @@ const Question = lazy(() => import('./pages/question'));
 const User = lazy(() => import('./pages/user'));
 const Category = lazy(() => import('./pages/category'));
 const Preview = lazy(() => import('./pages/preview'));
+const Home = lazy(() => import('./pages/home'));
 
 const AppRoutes = () => {
   const router = createBrowserRouter([
@@ -19,7 +20,8 @@ const AppRoutes = () => {
         { path: '/category', element: <Category /> },
         { path: '/q/:id', element: <Question /> },
         { path: '/preview', element: <Preview /> },
-        { path: '/*', element: <Navigate to="/list" /> },
+        { path: '/', element: <Home /> },
+        { path: '/*', element: <Navigate to="/" /> },
       ],
     },
   ]);
